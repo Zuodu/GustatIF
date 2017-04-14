@@ -6,16 +6,16 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import metier.modele.Produit;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-04-14T17:29:10")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-04-14T18:14:27")
 @StaticMetamodel(Restaurant.class)
 public class Restaurant_ { 
 
-    public static volatile SingularAttribute<Restaurant, Long> id;
-    public static volatile SingularAttribute<Restaurant, String> adresse;
     public static volatile ListAttribute<Restaurant, Produit> produits;
-    public static volatile SingularAttribute<Restaurant, String> description;
-    public static volatile SingularAttribute<Restaurant, Double> Longitude;
     public static volatile SingularAttribute<Restaurant, Double> latitude;
+    public static volatile SingularAttribute<Restaurant, String> adresse;
+    public static volatile SingularAttribute<Restaurant, String> description;
+    public static volatile SingularAttribute<Restaurant, Long> id;
+    public static volatile SingularAttribute<Restaurant, Double> Longitude;
     public static volatile SingularAttribute<Restaurant, String> denomination;
 
 }
