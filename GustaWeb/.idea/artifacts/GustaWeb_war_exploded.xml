@@ -6,10 +6,6 @@
         <element id="directory" name="classes">
           <element id="module-output" name="GustaWeb" />
         </element>
-        <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.0" />
-          <element id="library" level="project" name="Maven: com.insa.dasi.gustatif:gustatif:1.0" />
-        </element>
       </element>
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/target/GustaWeb-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
