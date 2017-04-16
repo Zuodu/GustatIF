@@ -39,7 +39,6 @@ public class ActionServlet extends HttpServlet {
     @Override
     public void destroy() {
         JpaUtil.destroy();
-        pause();
         super.destroy();
     }
 
