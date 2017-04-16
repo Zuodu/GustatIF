@@ -11,14 +11,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dao.JpaUtil;
-import metier.modele.Restaurant;
+import metier.modele.*;
 import metier.service.*;
+
+import static util.Saisie.pause;
 
 
 /**
@@ -36,6 +39,7 @@ public class ActionServlet extends HttpServlet {
     @Override
     public void destroy() {
         JpaUtil.destroy();
+        pause();
         super.destroy();
     }
 
@@ -53,9 +57,37 @@ public class ActionServlet extends HttpServlet {
         //init des services metiers et autre
         ServiceMetier metier = new ServiceMetier();
 
+        //PROCEDURE POUR CHAQUE POST ET GET : SESSION ET RECUP DE CE QUI FAUT FAIRE
+        HttpSession session = request.getSession(true);
         String methode = request.getMethod();
         String action = request.getParameter("action");
+
+        //TRAITEMENT EN FONCTION DE L'ACTION DESIREE
+
+        if(action.equals("authentifierClient")){
+            if(session.getAttribute("user")!=null){
+                System.out.println("User already auth, redirect...");
+                response.sendRedirect("/index.html");
+            }
+            System.out.println("appel2 du service authentifierClient");
+            String email = request.getParameter("email");
+            long id = Long.parseLong(request.getParameter("pwd"));
+            System.out.println("de "+email+id);
+            Client currentUser = null;
+            try{
+                currentUser = metier.authentifierClient(email, id);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            if(currentUser != null){
+                //TRES IMPORTANT PERMET DE VERIFIER SI LA SESSION A ETE AUTHENTIFIEE AVANT
+                session.setAttribute("user",email);
+                response.sendRedirect("/authSuccess.html");
+            }
+        }
+
         if(action.equals("recupererListeRestaurants")){
+            System.out.println("Appel du service recupererListeRestaurants");
             List<Restaurant> restaurants = null;
             try{
                 restaurants = metier.recupererListeRestaurants();
@@ -68,6 +100,8 @@ public class ActionServlet extends HttpServlet {
             printListeRestaurants(pw,restaurants);
             pw.close();
         }
+
+
     }
 
     /**
