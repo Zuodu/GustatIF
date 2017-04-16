@@ -106,7 +106,7 @@ public class ActionServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private void printListeRestaurants(PrintWriter pw,List<Restaurant> liste)
     {
