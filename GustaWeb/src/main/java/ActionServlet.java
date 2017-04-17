@@ -64,74 +64,82 @@ public class ActionServlet extends HttpServlet {
 //-----------------------------------------------------------------------------------
         //PROCEDURE POUR CHAQUE POST ET GET : SESSION ET RECUP DE CE QUI FAUT FAIRE
         String methode = request.getMethod();
+        System.out.println(methode);
         String action = request.getParameter("action");
         HttpSession session = request.getSession(false);
 //-----------------------------------------------------------------------------------
-        //SI YA PAS DE SESSION
-        if(session==null){
-            //SI LE CLIENT VEUT S'AUTENTIFIER
-            if(action.equals("authentifierClient")){
-                // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
-                if(currentUserList.contains(request.getParameter("email"))){
-                    System.out.println("utilisateur deja auth sur un autre servlet");
+        //si c'est un post
+        if(methode.equals("POST")) {
+            //SI YA PAS DE SESSION
+            if (session == null) {
+                //SI LE CLIENT VEUT S'AUTENTIFIER
+                if (action.equals("authentifierClient")) {
+                    // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
+                    if (currentUserList.contains(request.getParameter("email"))) {
+                        System.out.println("utilisateur deja auth sur un autre servlet");
+                        response.sendRedirect("/index.html");
+                        return;
+                    }
+                    System.out.println("appel du service authentifierClient");
+                    String email = request.getParameter("email");
+                    long id = Long.parseLong(request.getParameter("pwd"));
+                    System.out.println("de " + email + id);
+                    Client currentUser = null;
+                    try {
+                        currentUser = metier.authentifierClient(email, id);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (currentUser != null) { // SI YA BIEN CE COMPTE
+                        session = request.getSession(true);
+                        session.setAttribute("user", email);
+                        response.sendRedirect("/authSuccess.html");
+                        return;
+                    } else { //SI YA PAS CE COMPTE
+                        System.out.println("This account does not exist, redirecting...");
+                        response.sendRedirect("/index.html");
+                        return;
+                    }
+                } else {//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
+                    System.out.println("ServiceMetier call without auth !");
                     response.sendRedirect("/index.html");
                     return;
                 }
-                System.out.println("appel du service authentifierClient");
-                String email = request.getParameter("email");
-                long id = Long.parseLong(request.getParameter("pwd"));
-                System.out.println("de "+email+id);
-                Client currentUser = null;
-                try{
-                    currentUser = metier.authentifierClient(email, id);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                if(currentUser != null){ // SI YA BIEN CE COMPTE
-                    session = request.getSession(true);
-                    session.setAttribute("user",email);
-                    response.sendRedirect("/authSuccess.html");
-                    return;
-                }else{ //SI YA PAS CE COMPTE
-                    System.out.println("This account does not exist, redirecting...");
-                    response.sendRedirect("/index.html");
-                    return;
-                }
-            }else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
-                System.out.println("ServiceMetier call without auth !");
-                response.sendRedirect("/index.html");
-                return;
-            }
-        }else if(session.getAttribute("user")!= null){ // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
-            System.out.println("session already auth, ok for ServiceMetier calls.");
-            //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
+            } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
+                System.out.println("session already auth, ok for ServiceMetier calls.");
+                //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
 
-            //authentiferClient
-            //-----------------------------------------------------------------------------------
-            if(action.equals("authentifierClient")){
-                System.out.println("authentifierClient call with session+user already, redirection...");
-                response.sendRedirect("/index.html");
-                return;
-            }
-            //-----------------------------------------------------------------------------------
-            //recupererListeRestaurants
-            //-----------------------------------------------------------------------------------
-            if(action.equals("recupererListeRestaurants")){
-                System.out.println("Appel du service recupererListeRestaurants");
-                List<Restaurant> restaurants = null;
-                try{
-                    restaurants = metier.recupererListeRestaurants();
-                }catch(Exception e){
-                    e.printStackTrace();
+                //authentiferClient
+                //-----------------------------------------------------------------------------------
+                if (action.equals("authentifierClient")) {
+                    System.out.println("authentifierClient call with session+user already, redirection...");
+                    response.sendRedirect("/index.html");
+                    return;
                 }
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                PrintWriter pw = response.getWriter();
-                printListeRestaurants(pw,restaurants);
-                pw.close();
-                return;
+                //-----------------------------------------------------------------------------------
+                //recupererListeRestaurants
+                //-----------------------------------------------------------------------------------
+                if (action.equals("recupererListeRestaurants")) {
+                    System.out.println("Appel du service recupererListeRestaurants");
+                    List<Restaurant> restaurants = null;
+                    try {
+                        restaurants = metier.recupererListeRestaurants();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter pw = response.getWriter();
+                    printListeRestaurants(pw, restaurants);
+                    pw.close();
+                    return;
+                }
+                //-----------------------------------------------------------------------------------
             }
-            //-----------------------------------------------------------------------------------
+        }else{
+            System.out.println("request method was not post");
+            response.sendRedirect("/index.html");
+            return;
         }
     }
 
