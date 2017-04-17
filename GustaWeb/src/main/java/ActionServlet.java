@@ -65,12 +65,13 @@ public class ActionServlet extends HttpServlet {
         //PROCEDURE POUR CHAQUE POST ET GET : SESSION ET RECUP DE CE QUI FAUT FAIRE
         String methode = request.getMethod();
         String action = request.getParameter("action");
+        HttpSession session = request.getSession(false);
 //-----------------------------------------------------------------------------------
-        //VERIFICATION SI LA SESSION VIENT D'ETRE CREE
-        if(request.getSession(false)==null){
+        //SI YA PAS DE SESSION
+        if(session==null){
             //SI LE CLIENT VEUT S'AUTENTIFIER
             if(action.equals("authentifierClient")){
-                // SI LE CLIENT A DEJA UNE SESSION EN COURS
+                // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
                 if(currentUserList.contains(request.getParameter("email"))){
                     System.out.println("utilisateur deja auth sur un autre servlet");
                     response.sendRedirect("/index.html");
@@ -87,12 +88,11 @@ public class ActionServlet extends HttpServlet {
                     e.printStackTrace();
                 }
                 if(currentUser != null){ // SI YA BIEN CE COMPTE
-
+                    session = request.getSession(true);
                     session.setAttribute("user",email);
-                    currentUserList.add(email);
                     response.sendRedirect("/authSuccess.html");
                     return;
-                }else{
+                }else{ //SI YA PAS CE COMPTE
                     System.out.println("This account does not exist, redirecting...");
                     response.sendRedirect("/index.html");
                     return;
@@ -102,7 +102,7 @@ public class ActionServlet extends HttpServlet {
                 response.sendRedirect("/index.html");
                 return;
             }
-        }else{ // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
+        }else if(session.getAttribute("user")!= null){ // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
             System.out.println("session already auth, ok for ServiceMetier calls.");
             //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
 

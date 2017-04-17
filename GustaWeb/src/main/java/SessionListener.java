@@ -4,32 +4,37 @@
 
 
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
 
-@WebListener()
-public class SessionListener implements HttpSessionListener {
+@WebListener
+public class SessionListener implements HttpSessionAttributeListener {
 
     // Public constructor is required by servlet spec
     public SessionListener() {
+
     }
-    // -------------------------------------------------------
-    // HttpSessionListener implementation
-    // -------------------------------------------------------
+
     @Override
-    public void sessionCreated(HttpSessionEvent se) {
-        System.out.println("SessionListener : sessionCreated");
-      /* Session is created. */
+    public void attributeAdded(HttpSessionBindingEvent se) {
+        String user = (String) se.getSession().getAttribute("user");
+        System.out.println("valueBound of : "+user);
+        ActionServlet.currentUserList.add(user);
+        System.out.println("SessionListener : sessionCreated with list updated");
+      /* Session is being created. */
     }
+
     @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-      /* Session is destroyed. */
+    public void attributeRemoved(HttpSessionBindingEvent se) {
+      /* Session is being destroyed. */
         System.out.println("SessionListener : sessionDestroyed");
         String user = (String) se.getSession().getAttribute("user");
         System.out.println("user "+user+" going to get removed from list");
         ActionServlet.currentUserList.remove(user);
+    }
+
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent se) {
+
     }
 }
