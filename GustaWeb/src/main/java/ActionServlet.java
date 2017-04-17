@@ -134,6 +134,21 @@ public class ActionServlet extends HttpServlet {
                     pw.close();
                     return;
                 }
+                if(action.equals("recupererRestaurant")){
+/*                    long restaurantID = Long.parseLong(request.getParameter("restaurantID"));
+                    Restaurant target = null;
+                    try{
+                        target = metier.recupererRestaurant(restaurantID);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter pw = response.getWriter();
+                    printRestaurant(pw, target);
+                    pw.close();
+                    return;*/
+                }
                 //-----------------------------------------------------------------------------------
             }
         }else{
@@ -181,6 +196,10 @@ public class ActionServlet extends HttpServlet {
         return "Short description";
     }
 
+    //-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
+    //PRIVATE
+
     private void printListeRestaurants(PrintWriter pw,List<Restaurant> liste)
     {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -198,4 +217,5 @@ public class ActionServlet extends HttpServlet {
         container.add("restaurants",jsonliste);
         pw.println(gson.toJson(container));
     }
+
 }

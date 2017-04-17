@@ -1,53 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Gustat'IF - Liste des Restaurants</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
-    </head>
-    <body>
-        <h1>Gustat'IF &ndash; Liste des Restaurants</h1>
-        <div id='listeRestaurants'>
-            <span>chargement en cours...</span>
-        </div>
+<head>
+    <title>Gustat'IF - Liste des Restaurants</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+</head>
+<body>
+<h1>Gustat'IF &ndash; Liste des Restaurants</h1>
+<div id='listeRestaurants'>
+    <span>chargement en cours...</span>
+</div>
 
 
-        <script>
+<script>
+    var restaurants;
 
-            $(function() {
+    $(function() {
 
-                $.ajax({
-                    url: './ActionServlet',
-                    type: 'POST',
-                    data: {
-                        action: 'recupererListeRestaurants',
-                        id: window.location.search.substring(1)
-                    },
-                    dataType: 'json'
-                })
-                .done(function(data) {
-                    var restaurants = data.restaurants;
-
-                    var contenuHtml = '<ul>';
-                    var i;
-                    for (i = 0; i < restaurants.length; i++) {
-                        contenuHtml += '<li>' + restaurants[i].denomination + '</li>';
-                    }
-                    contenuHtml += '</ul>';
-                    $('#listeRestaurants').html(contenuHtml);
-
-
-                })
-                .fail(function() {
-                    $('#listeRestaurants').html('ERREUR de chargement');
-                })
-                .always(function() {
-                    //
-                });
-
+        $.ajax({
+            url: './ActionServlet',
+            type: 'POST',
+            data: {
+                action: 'recupererListeRestaurants',
+                id: window.location.search.substring(1)
+            },
+            dataType: 'json'
+        })
+            .done(function(data) {
+                restaurants = data.restaurants;
+                var contenuHtml = '<ul>';
+                var i;
+                for (i = 0; i < restaurants.length; i++) {
+                    contenuHtml += '<li>' + restaurants[i].denomination + '<div id="'+restaurants[i].id+ '"><a href="javascript:showDetail('
+                        +restaurants[i].id+')">Voir</a>' + '</li>';
+                }
+                contenuHtml += '</ul>';
+                $('#listeRestaurants').html(contenuHtml);
+            })
+            .fail(function() {
+                $('#listeRestaurants').html('ERREUR de chargement');
+            })
+            .always(function() {
+                //
             });
 
-        </script>
-    </body>
+    });
+
+    function showDetail(restoID){
+    var restaurant;
+    for(var i=0;i<restaurants.length;i++){
+        if(restaurants[i].id===restoID){
+            restaurant = restaurants[i];
+        }
+    }
+    $('#'+restoID).html('<p>'+restaurant.adresse+'</p>'+'<p>'+restaurant.description+'</p>');
+    }
+
+</script>
+</body>
 </html>
