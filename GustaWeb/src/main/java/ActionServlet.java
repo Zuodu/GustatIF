@@ -6,6 +6,7 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,10 +31,15 @@ import static util.Saisie.pause;
  */
 public class ActionServlet extends HttpServlet {
 
+    public static List<String> currentUserList = new ArrayList<String>();
+
     @Override
     public void init() throws ServletException {
         super.init();
         JpaUtil.init();
+        if(currentUserList.isEmpty()){
+            System.out.println("currentUserList is empty");
+        }
     }
 
     @Override
@@ -55,52 +61,78 @@ public class ActionServlet extends HttpServlet {
             throws ServletException, IOException {
         //init des services metiers et autre
         ServiceMetier metier = new ServiceMetier();
-
+//-----------------------------------------------------------------------------------
         //PROCEDURE POUR CHAQUE POST ET GET : SESSION ET RECUP DE CE QUI FAUT FAIRE
-        HttpSession session = request.getSession(true);
         String methode = request.getMethod();
         String action = request.getParameter("action");
+//-----------------------------------------------------------------------------------
+        //VERIFICATION SI LA SESSION VIENT D'ETRE CREE
+        if(request.getSession(false)==null){
+            //SI LE CLIENT VEUT S'AUTENTIFIER
+            if(action.equals("authentifierClient")){
+                // SI LE CLIENT A DEJA UNE SESSION EN COURS
+                if(currentUserList.contains(request.getParameter("email"))){
+                    System.out.println("utilisateur deja auth sur un autre servlet");
+                    response.sendRedirect("/index.html");
+                    return;
+                }
+                System.out.println("appel du service authentifierClient");
+                String email = request.getParameter("email");
+                long id = Long.parseLong(request.getParameter("pwd"));
+                System.out.println("de "+email+id);
+                Client currentUser = null;
+                try{
+                    currentUser = metier.authentifierClient(email, id);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                if(currentUser != null){ // SI YA BIEN CE COMPTE
 
-        //TRAITEMENT EN FONCTION DE L'ACTION DESIREE
-
-        if(action.equals("authentifierClient")){
-            if(session.getAttribute("user")!=null){
-                System.out.println("User already auth, redirect...");
+                    session.setAttribute("user",email);
+                    currentUserList.add(email);
+                    response.sendRedirect("/authSuccess.html");
+                    return;
+                }else{
+                    System.out.println("This account does not exist, redirecting...");
+                    response.sendRedirect("/index.html");
+                    return;
+                }
+            }else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
+                System.out.println("ServiceMetier call without auth !");
                 response.sendRedirect("/index.html");
+                return;
             }
-            System.out.println("appel2 du service authentifierClient");
-            String email = request.getParameter("email");
-            long id = Long.parseLong(request.getParameter("pwd"));
-            System.out.println("de "+email+id);
-            Client currentUser = null;
-            try{
-                currentUser = metier.authentifierClient(email, id);
-            }catch(Exception e){
-                e.printStackTrace();
+        }else{ // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
+            System.out.println("session already auth, ok for ServiceMetier calls.");
+            //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
+
+            //authentiferClient
+            //-----------------------------------------------------------------------------------
+            if(action.equals("authentifierClient")){
+                System.out.println("authentifierClient call with session+user already, redirection...");
+                response.sendRedirect("/index.html");
+                return;
             }
-            if(currentUser != null){
-                //TRES IMPORTANT PERMET DE VERIFIER SI LA SESSION A ETE AUTHENTIFIEE AVANT
-                session.setAttribute("user",email);
-                response.sendRedirect("/authSuccess.html");
+            //-----------------------------------------------------------------------------------
+            //recupererListeRestaurants
+            //-----------------------------------------------------------------------------------
+            if(action.equals("recupererListeRestaurants")){
+                System.out.println("Appel du service recupererListeRestaurants");
+                List<Restaurant> restaurants = null;
+                try{
+                    restaurants = metier.recupererListeRestaurants();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter pw = response.getWriter();
+                printListeRestaurants(pw,restaurants);
+                pw.close();
+                return;
             }
+            //-----------------------------------------------------------------------------------
         }
-
-        if(action.equals("recupererListeRestaurants")){
-            System.out.println("Appel du service recupererListeRestaurants");
-            List<Restaurant> restaurants = null;
-            try{
-                restaurants = metier.recupererListeRestaurants();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            PrintWriter pw = response.getWriter();
-            printListeRestaurants(pw,restaurants);
-            pw.close();
-        }
-
-
     }
 
     /**
