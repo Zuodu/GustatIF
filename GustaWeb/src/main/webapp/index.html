@@ -2,25 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>GustatIF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- bootstrapt minCSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="resource/cover.css">
 </head>
 <body>
-Bienvenue
-<a href="listeRestaurants.html">Voir la liste des restaurants</a>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <!-- logo -->
+        <div class="cover-container" style="height: 30%;padding-top: 2%">
+            <div class="inner cover">
+                <img src="resource/logo.png" alt="GustatIF">
+            </div>
+        </div>
+        <!-- FORMULAIRE -->
+        <div class="cover-container">
+            <div class="row">
+                <div class="col-md-6 ">
+                    <div class="panel panel-default text-center">
+                        <div class="panel-body">
+                            Deja Client de GustatIF ?
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-3">
+                        <form action="./ActionServlet" method="post">
+                            <div class="input-group">
+                                <span class="input-group-addon">@</span>
+                                <input type="hidden" name="action" value="authentifierClient">
+                                <input type="email" name="email" class="form-control" value="asing8183@free.fr"
+                                       required>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">id</span>
+                                <input type="password" name="pwd" class="form-control" value="127" required>
+                            </div>
+                                <input type="submit" class="btn btn-primary" value="Connexion">
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default text-center">
+                        <div class="panel-body">
+                            Inscrivez vous a GustatIF !
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-3">
+                        <form action="./ActionServlet" method="post">
+                            <div class="input-group">
+                                <span class="input-group-addon">Nom</span>
+                                <input type="text"  name="nom" class="form-control" placeholder="Jean" required>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Prénom</span>
+                                <input type="text" name="prenom" class="form-control" placeholder="Dupont" required>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Tél</span>
+                                <input type="text" name="tel" class="form-control" placeholder="06XXXXXXXX" required>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">&ensp;E-mail&ensp;</span>
+                                <input type="text" name="email" class="form-control" placeholder="jean.dupont@exemple.fr" required>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Adresse</span>
+                                <input type="text" name="adresse" class="form-control" placeholder="17 rue des Fleurs" required>
+                            </div>
+                            <input type="submit" class="btn btn-primary" value="Valider l'inscription">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FOOTER -->
+        <div class="cover-container">
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>Projet GustatIF : Binôme B3142, INSA de Lyon.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div>
-    <h1>Connexion</h1>
-    <form action="./ActionServlet" method="post">
-        <fieldset>
-            <legend>Informations de connexion</legend>
-            <input type="hidden" name="action" value="authentifierClient">
-            Email de connexion :<br>
-            <input type="email" name="email" value="asing8183@free.fr" required><br>
-            Mot de passe (id) :<br>
-            <input type="password" name="pwd" value="127" required><br>
-            <input type="submit" value="Connexion" >
-        </fieldset>
-    </form>
 </div>
+
 </body>
 </html>
