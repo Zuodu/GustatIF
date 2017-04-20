@@ -7,10 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="002962a0-84e4-434b-9a80-5643bc330d7b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/GustaWeb-1.0-SNAPSHOT.war" afterPath="$PROJECT_DIR$/target/GustaWeb-1.0-SNAPSHOT.war" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ActionServlet.class" afterPath="$PROJECT_DIR$/target/classes/ActionServlet.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/index.html" afterPath="$PROJECT_DIR$/src/main/webapp/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -949,7 +946,7 @@
       <workItem from="1492470842652" duration="208000" />
       <workItem from="1492532689597" duration="11164000" />
       <workItem from="1492616740390" duration="1133000" />
-      <workItem from="1492703406316" duration="12000" />
+      <workItem from="1492703406316" duration="35000" />
     </task>
     <task id="LOCAL-00001" summary="starting dev on mac : success, but maybe problems on window ?">
       <created>1492274239778</created>
@@ -1007,11 +1004,18 @@
       <option name="project" value="LOCAL" />
       <updated>1492546798137</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="nouveau index avec joli logo">
+      <created>1492703433205</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1492703433205</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55605000" />
+    <option name="totallyTimeSpent" value="55628000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
