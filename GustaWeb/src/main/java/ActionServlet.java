@@ -97,12 +97,12 @@ public class ActionServlet extends HttpServlet {
                         return;
                     } else { //SI YA PAS CE COMPTE
                         System.out.println("This account does not exist, redirecting...");
-                        response.sendRedirect("/index.html");
+                        response.sendRedirect("/");
                         return;
                     }
                 } else {//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
                     System.out.println("ServiceMetier call without auth !");
-                    response.sendRedirect("/index.html");
+                    response.sendRedirect("/");
                     return;
                 }
             } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
@@ -113,7 +113,7 @@ public class ActionServlet extends HttpServlet {
                 //-----------------------------------------------------------------------------------
                 if (action.equals("authentifierClient")) {
                     System.out.println("authentifierClient call with session+user already, redirection...");
-                    response.sendRedirect("/index.html");
+                    response.sendRedirect("/authSuccess.html");
                     return;
                 }
                 //-----------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ public class ActionServlet extends HttpServlet {
             }
         }else{
             System.out.println("request method was not post");
-            response.sendRedirect("/index.html");
+            response.sendRedirect("/");
             return;
         }
     }
