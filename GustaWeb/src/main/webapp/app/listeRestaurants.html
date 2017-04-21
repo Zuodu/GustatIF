@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Gustat'IF - Liste des Restaurants</title>
-    <meta charset="UTF-8">
+    <meta charset="ISO-8859-1">
     <meta name="viewport" content="width=device-width">
     <script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
     <link rel="shortcut icon" href="../resource/favicon.ico" />
@@ -21,7 +21,7 @@
 
         $.ajax({
             url: '/ActionServlet',
-            type: 'POST',
+            method: 'POST',
             data: {
                 action: 'recupererListeRestaurants',
                 id: window.location.search.substring(1)

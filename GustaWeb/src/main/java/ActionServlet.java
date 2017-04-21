@@ -7,7 +7,9 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +33,7 @@ import static util.Saisie.pause;
  */
 public class ActionServlet extends HttpServlet {
 
-    public static List<String> currentUserList = new ArrayList<String>();
+    public static Set<String> currentUserList = new HashSet<>();
 
     @Override
     public void init() throws ServletException {
@@ -64,7 +66,7 @@ public class ActionServlet extends HttpServlet {
 //-----------------------------------------------------------------------------------
         //PROCEDURE POUR CHAQUE POST ET GET : SESSION ET RECUP DE CE QUI FAUT FAIRE
         String action = request.getParameter("action");
-        System.out.println("[Servlet] called with : "+" for "+action);
+        System.out.println("[Servlet] called with : "+action);
         HttpSession session = request.getSession(false);
 //-----------------------------------------------------------------------------------
         //SI YA PAS DE SESSION
@@ -74,7 +76,8 @@ public class ActionServlet extends HttpServlet {
                 // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
                 if (currentUserList.contains(request.getParameter("email"))) {
                     System.out.println("utilisateur deja auth sur un autre servlet");
-                    response.sendRedirect("/");
+                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                     return;
                 }
                 System.out.println("appel du service authentifierClient");
@@ -82,6 +85,7 @@ public class ActionServlet extends HttpServlet {
                 long id = Long.parseLong(request.getParameter("pwd"));
                 System.out.println("de " + email + id);
                 Client currentUser = null;
+
                 try {
                     currentUser = metier.authentifierClient(email, id);
                 } catch (Exception e) {
@@ -90,11 +94,20 @@ public class ActionServlet extends HttpServlet {
                 if (currentUser != null) { // SI YA BIEN CE COMPTE
                     session = request.getSession(true);
                     session.setAttribute("user", email);
-                    response.sendRedirect("/app/authSuccess.html");
+                    session.setAttribute("client",currentUser);
+                    List<Restaurant> restaurants = null;
+                    try {
+                        restaurants = metier.recupererListeRestaurants();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    request.setAttribute("listeResto",restaurants);
+                    request.getRequestDispatcher("/app/essai.jsp").forward(request,response);
                     return;
                 } else { //SI YA PAS CE COMPTE
                     System.out.println("This account does not exist, redirecting...");
-                    response.sendRedirect("/"); //todo; envoyer vers error jsp
+                    request.setAttribute("errorMessage","Ce compte n'existe pas ! Veuillez réessayer.");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                     return;
                 }
             }else if(action.equals("inscrireClient")){
@@ -106,12 +119,13 @@ public class ActionServlet extends HttpServlet {
                 Client newClient = new Client(clientString[0],clientString[1],clientString[2],clientString[3]);
                 if(metier.inscrireClient(newClient)){
                     System.out.println("inscription successful.");
-                    response.sendRedirect("/");//todo: changer en la page jsp
+                    response.sendRedirect("/inscriptionSuccess.html");
                     return;
                 }
             }else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
                 System.out.println("ServiceMetier call without auth !");
-                response.sendRedirect("/");
+                request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
+                request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 return;
             }
         } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
@@ -137,7 +151,7 @@ public class ActionServlet extends HttpServlet {
                     e.printStackTrace();
                 }
                 response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
+                response.setCharacterEncoding("ISO-8859-1");
                 PrintWriter pw = response.getWriter();
                 printListeRestaurants(pw, restaurants);
                 pw.close();
@@ -176,8 +190,8 @@ public class ActionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("request method was not POST, redirection to index.");
-        response.sendRedirect("/");
+        System.out.println("request method was not POST");
+        processRequest(request,response);
         return;
     }
 
