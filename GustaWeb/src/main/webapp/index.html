@@ -9,6 +9,7 @@
     <!-- bootstrapt minCSS-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="resource/cover.css">
+    <link rel="shortcut icon" href="resource/favicon.ico" />
 </head>
 <body>
 <div class="site-wrapper">
@@ -54,15 +55,12 @@
                         <form action="./ActionServlet" method="post">
                             <div class="input-group">
                                 <span class="input-group-addon">Nom</span>
+                                <input type="hidden" name="action" value="inscrireClient">
                                 <input type="text"  name="nom" class="form-control" placeholder="Jean" required>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon">Prénom</span>
                                 <input type="text" name="prenom" class="form-control" placeholder="Dupont" required>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">Tél</span>
-                                <input type="tel" name="tel" class="form-control" placeholder="0xxxxxxxxx" required pattern="(0)\d{9}">
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon">&ensp;E-mail&ensp;</span>

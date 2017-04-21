@@ -18,9 +18,9 @@ public class SessionListener implements HttpSessionAttributeListener {
     @Override
     public void attributeAdded(HttpSessionBindingEvent se) {
         String user = (String) se.getSession().getAttribute("user");
-        System.out.println("valueBound of : "+user);
+        System.out.println("[SessionListener] valueBound of : "+user);
         ActionServlet.currentUserList.add(user);
-        System.out.println("SessionListener : sessionCreated with list updated");
+        System.out.println("[SessionListener] sessionCreated with list updated");
       /* Session is being created. */
     }
 
@@ -29,7 +29,7 @@ public class SessionListener implements HttpSessionAttributeListener {
       /* Session is being destroyed. */
         System.out.println("SessionListener : sessionDestroyed");
         String user = (String) se.getSession().getAttribute("user");
-        System.out.println("user "+user+" going to get removed from list");
+        System.out.println("[SessionListener] user "+user+" going to get removed from list");
         ActionServlet.currentUserList.remove(user);
     }
 

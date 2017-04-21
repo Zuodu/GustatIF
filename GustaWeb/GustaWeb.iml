@@ -60,5 +60,6 @@
     <orderEntry type="library" name="Maven: com.insa.dasi.gustatif:gustatif:1.0" level="project" />
     <orderEntry type="library" name="jquery-1.12.1" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="com.google.maps:google-maps-services:0.1.17" level="project" />
   </component>
 </module>
