@@ -31,9 +31,11 @@ import static util.Saisie.pause;
  *
  * @author zifanYao
  */
+
 public class ActionServlet extends HttpServlet {
 
     public static Set<String> currentUserList = new HashSet<>();
+    final int CHARGE_MAX_LIMIT = 8000;
 
     @Override
     public void init() throws ServletException {
@@ -102,7 +104,7 @@ public class ActionServlet extends HttpServlet {
                         e.printStackTrace();
                     }
                     request.setAttribute("listeResto",restaurants);
-                    request.getRequestDispatcher("/app/essai.jsp").forward(request,response);
+                    request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request,response);
                     return;
                 } else { //SI YA PAS CE COMPTE
                     System.out.println("This account does not exist, redirecting...");
@@ -160,20 +162,21 @@ public class ActionServlet extends HttpServlet {
             //-----------------------------------------------------------------------------------
             //recupererRestaurant
             //-----------------------------------------------------------------------------------
-            if(action.equals("recupererRestaurant")){
-/*                    long restaurantID = Long.parseLong(request.getParameter("restaurantID"));
-                    Restaurant target = null;
-                    try{
-                        target = metier.recupererRestaurant(restaurantID);
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    PrintWriter pw = response.getWriter();
-                    printRestaurant(pw, target);
-                    pw.close();
-                    return;*/
+            if(action.equals("afficherCarte")){
+                long restoId = Long.parseLong(request.getParameter("restoId"));
+                Restaurant resto = null;
+                List<Produit> produits = null;
+                try {
+                    resto = metier.recupererRestaurant(restoId);
+                    produits = metier.recupererListeProduits(restoId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                request.setAttribute("resto",resto);
+                request.setAttribute("carte",produits);
+                request.setAttribute("chargeMaxLimit",CHARGE_MAX_LIMIT);
+                request.getRequestDispatcher("/app/carteDirectory.jsp").forward(request,response);
+                return;
             }
             //-----------------------------------------------------------------------------------
         }
