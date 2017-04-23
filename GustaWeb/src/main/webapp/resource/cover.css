@@ -69,6 +69,10 @@ body {
     padding-top: +10px;
 }
 
+.control-label{
+    font-size: 10pt;
+}
+
 /*
  * Affix and center
  */

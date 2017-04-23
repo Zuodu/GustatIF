@@ -6,10 +6,7 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -137,8 +134,14 @@ public class ActionServlet extends HttpServlet {
             //authentiferClient
             //-----------------------------------------------------------------------------------
             if (action.equals("authentifierClient")) {
-                System.out.println("authentifierClient call with session+user already, redirection...");
-                response.sendRedirect("/app/authSuccess.html");
+                List<Restaurant> restaurants = null;
+                try {
+                    restaurants = metier.recupererListeRestaurants();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                request.setAttribute("listeResto",restaurants);
+                request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request,response);
                 return;
             }
             //-----------------------------------------------------------------------------------
@@ -163,6 +166,7 @@ public class ActionServlet extends HttpServlet {
             //recupererRestaurant
             //-----------------------------------------------------------------------------------
             if(action.equals("afficherCarte")){
+                System.out.println("appel du service afficherCarte");
                 long restoId = Long.parseLong(request.getParameter("restoId"));
                 Restaurant resto = null;
                 List<Produit> produits = null;
@@ -179,6 +183,74 @@ public class ActionServlet extends HttpServlet {
                 return;
             }
             //-----------------------------------------------------------------------------------
+            //submitCommande
+            //-----------------------------------------------------------------------------------
+            if(action.equals("attribuerLivreur")){
+                /*TODO: alors ca c compliqué... il faut vérifier que les arguments sont valides :
+                que l'id donné est bien dans le resto, et que l'utilisateur ne change pas les params
+                */
+                System.out.println("appel du service attribuerLivreur");
+                Map<String, String[]> paramIds = request.getParameterMap();
+                ArrayList<ProduitsCommandes> produitscommandes = new ArrayList<>();
+                Produit currentProduit = null;
+                Restaurant currentResto = null;
+                Client currentClient = null;
+                for (String paramName : paramIds.keySet()) {
+                    if(paramName.equals("action")){
+                    }else if(paramName.equals("restoID")){
+                        long restoID = Long.parseLong(paramIds.get(paramName)[0]);
+                        try {
+                            currentResto = metier.recupererRestaurant(restoID);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("current resto "+currentResto.getDenomination());
+                    }else if(paramName.equals("clientID")){
+                        long clientID = Long.parseLong(paramIds.get(paramName)[0]);
+                        try {
+                            currentClient = metier.recupererClient(clientID);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("current client "+currentClient.getNom());
+                    }else{
+                        int paramValueInt = Integer.parseInt(paramIds.get(paramName)[0]);
+                        System.out.println("value parser "+paramValueInt+" of "+paramName);
+                        if(paramValueInt >0) {
+                            try {
+                                int paramInt = Integer.parseInt(paramName);
+                                currentProduit = metier.recupererProduit(paramInt);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            ProduitsCommandes pc = new ProduitsCommandes(currentProduit, Integer.parseInt(paramIds.get(paramName)[0]));
+                            produitscommandes.add(pc);
+                        }
+                    }
+                }
+                //fin for
+                Livreur livreur = null;
+                try {
+                    livreur = metier.attribuerLivreur(currentResto,produitscommandes,currentClient);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(livreur != null){
+                    System.out.println("attribution to : "+livreur.getId());
+                    response.sendRedirect("/");
+                }else{
+                    System.out.println("echec d'attribution.");
+                    response.sendRedirect("/");
+                }
+            }
+            //-----------------------------------------------------------------------------------
+            //deconnexion
+            //-----------------------------------------------------------------------------------
+            if(action.equals("deconnexion")){
+                System.out.println("appel du service deconnexion");
+                session.invalidate();
+                response.sendRedirect("/");
+            }
         }
     }
 
@@ -193,7 +265,7 @@ public class ActionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("request method was not POST");
+        System.out.println("request method : GET");
         processRequest(request,response);
         return;
     }

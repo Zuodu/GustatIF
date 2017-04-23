@@ -25,7 +25,7 @@
             <img src="resource/logo.png" alt="" class="navbar-brand" style="padding:0 0">
         </div>
         <p class="navbar-text" style="font-size: 13pt">Bonjour ${sessionScope.client.nom} ! Bienvenue chez GustatIF !</p>
-        <button class="btn btn-primary navbar-btn navbar-right" style="margin-right: 0">Déconnexion</button>
+        <a href="/dashboard?action=deconnexion" class="btn btn-primary navbar-btn navbar-right" style="margin-right: 0">Déconnexion</a>
 
     </div>
 </nav>

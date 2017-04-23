@@ -26,7 +26,7 @@
             <img src="resource/logo.png" alt="" class="navbar-brand" style="padding:0 0">
         </div>
         <p class="navbar-text" style="font-size: 13pt">Bonjour ${sessionScope.client.nom} ! Bienvenue chez GustatIF !</p>
-        <button class="btn btn-primary navbar-btn navbar-right" style="margin-right: 0">Déconnexion</button>
+        <a href="/dashboard?action=deconnexion" class="btn btn-primary navbar-btn navbar-right" style="margin-right: 0">Déconnexion</a>
 
     </div>
 </nav>
@@ -39,22 +39,27 @@
     <!-- groupage -->
     <div class="panel panel-default">
         <div class="panel panel-body">
-            <form action="#" class="form-horizontal">
-                <c:forEach items="${requestScope.carte}" var="plat">
-                    <div class="form-group form-group-lg">
-                        <label for="q${plat.id}" class="col-md-8 control-label">${plat.denomination} (${plat.description})
+            <form action="/dashboard" class="form-horizontal">
+                <input type="hidden" name="action" value="attribuerLivreur">
+                <input type="hidden" name="restoID" value="${requestScope.resto.id}">
+                <input type="hidden" name="clientID" value="${sessionScope.client.id}">
+                <c:forEach items="${requestScope.carte}" var="plat" varStatus="loop">
+                    <div class="form-group form-group-lg menuItem">
+                        <label for="lab${plat.id}" class="col-md-8 control-label">${plat.denomination} (${plat.description})
                             <span class="label label-info">${plat.prix} ¤</span>
+                            <span class="hidden">${plat.poids}</span>
                         </label>
                         <div class="col-md-4">
-                            <input type="number" class="form-control" id="q${plat.id}" name="q${plat.id}" placeholder="quantité" style="width: 20%">
+                            <input type="number" class="form-control" id="lab${plat.id}" name="${plat.id}" onclick="refreshInfo();"
+                                   style="width: 20%" placeholder="0" value="0">
                         </div>
                     </div>
                 </c:forEach>
                 <div class="form-group">
                     <div class="col-md-offset-7 col-md-5">
+                        <div class="well well-sm">Prix total : 0 ¤</div>
                         <div class="progress">
-                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100"
-                                 aria-valuemin="0" aria-valuemax="100" style="width:40%"></div>
+                            <div class="progress-bar progress-bar-striped active" style="width:0%">Poids max</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Valider la commande</button>
                     </div>
@@ -64,4 +69,26 @@
     </div>
 </div>
 </body>
+<script>
+    function refreshInfo(){
+        var total = 0 ;
+        var poids = 0;
+        var itemList = document.getElementsByClassName("menuItem");
+        var quantite;
+        for(var i=0;i<itemList.length; i++) {
+            quantite = parseInt(itemList[i].getElementsByTagName("input")[0].value);
+            total += parseInt(itemList[i].getElementsByTagName("span")[0].innerHTML) * quantite;
+            console.log(total);
+            poids += parseInt(itemList[i].getElementsByTagName("span")[1].innerHTML) * quantite;
+        }
+        document.getElementsByClassName("well-sm")[0].innerHTML="Prix total : "+total+" ¤";
+        var pourcent = (poids/${requestScope.chargeMaxLimit})*100;
+        if(pourcent >= 100){
+            document.getElementsByClassName("progress-bar-striped")[0].classList.add("progress-bar-danger");
+        }else{
+            document.getElementsByClassName("progress-bar-striped")[0].classList.remove("progress-bar-danger");
+        }
+        document.getElementsByClassName("progress-bar-striped")[0].style.width = pourcent+"%";
+    }
+</script>
 </html>

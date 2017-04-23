@@ -4,15 +4,13 @@
 
 
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.*;
 
 @WebListener
-public class SessionListener implements HttpSessionAttributeListener {
+public class SessionListener implements HttpSessionAttributeListener,HttpSessionListener {
 
     // Public constructor is required by servlet spec
     public SessionListener() {
-
     }
 
     @Override
@@ -26,15 +24,22 @@ public class SessionListener implements HttpSessionAttributeListener {
 
     @Override
     public void attributeRemoved(HttpSessionBindingEvent se) {
-      /* Session is being destroyed. */
-        System.out.println("SessionListener : sessionDestroyed");
-        String user = (String) se.getSession().getAttribute("user");
-        System.out.println("[SessionListener] user "+user+" going to get removed from list");
-        ActionServlet.currentUserList.remove(user);
     }
 
     @Override
     public void attributeReplaced(HttpSessionBindingEvent se) {
 
+    }
+
+    @Override
+    public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
+        String user = (String) httpSessionEvent.getSession().getAttribute("user");
+        System.out.println("[SessionListener] user "+user+" removed from currentUserList");
+        ActionServlet.currentUserList.remove(user);
+        System.out.println("[SessionListener] sessionDestroyed");
     }
 }
