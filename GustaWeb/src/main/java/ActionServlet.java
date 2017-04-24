@@ -73,13 +73,13 @@ public class ActionServlet extends HttpServlet {
             //SI LE CLIENT VEUT S'AUTENTIFIER
             if (action.equals("authentifierClient")) {
                 // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
+                System.out.println("appel du service authentifierClient");
                 if (currentUserList.contains(request.getParameter("email"))) {
                     System.out.println("utilisateur deja auth sur un autre servlet");
                     request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                     return;
                 }
-                System.out.println("appel du service authentifierClient");
                 String email = request.getParameter("email");
                 long id = Long.parseLong(request.getParameter("pwd"));
                 System.out.println("de " + email + id);
@@ -109,6 +109,67 @@ public class ActionServlet extends HttpServlet {
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                     return;
                 }
+            }else if(action.equals("authentifierLivreur")) {
+                System.out.println("appel du service authentifierLivreur");
+                if(currentUserList.contains(request.getParameter("email"))){
+                    System.out.println("utilisateur deja auth sur un autre servlet");
+                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                    return;
+                }
+                String email = request.getParameter("email");
+                long id = Long.parseLong(request.getParameter("pwd"));
+                System.out.println("de " + email + id);
+                List<Livreur> livreurs = null;
+                try {
+                    livreurs = metier.authentifierLivreur(email,id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //ADMIN
+                if(livreurs == null){
+                    System.out.println("c'est l'admin");
+                    session = request.getSession(true);
+                    session.setAttribute("user","gustatif@gustatif.com");
+                    session.setAttribute("livreurs",livreurs);
+                    response.sendRedirect("/");//todo : page d'admin ??
+                    return;
+                }
+                //ERREUR D'AUTH
+                if(livreurs.size() == 0){
+                    System.out.println("erreur d'auth Livreur");
+                    request.setAttribute("errorMessage","Ce compte Livreur n'existe pas ! Veuillez réessayer.");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                    return;
+                } else {
+                    System.out.println("livreurs trouves");
+                    session = request.getSession(true);
+                    session.setAttribute("user",email);
+                    session.setAttribute("livreurs",livreurs);
+                    List<Commande> allEnCours = null;
+                    List<Commande> commandesEnCours = new ArrayList<>();
+                    List<Client> clientsEnCours = new ArrayList<>();
+                    try {
+                        allEnCours = metier.recupererLivraisonEnCours();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    for (Commande i : allEnCours){
+                        String commandeLivreurMail = i.getLivreur().getMail();
+                        for(Livreur j : livreurs){
+                            if(j.getMail().equals(commandeLivreurMail)){
+                                commandesEnCours.add(i);
+                                clientsEnCours.add(i.getClient());
+                            }
+                        }
+                    }
+                    //ecriture des donnees
+                    System.out.println("nbr commandes "+commandesEnCours.size());
+                    request.setAttribute("commandesEnCours",commandesEnCours);
+                    request.setAttribute("clientsEnCours",clientsEnCours);
+                    request.getRequestDispatcher("/app/livraisonDirectory.jsp").forward(request,response);
+                    return;
+                }
             }else if(action.equals("inscrireClient")){
                 //-----------------------------------------------------------------------------------
                 //inscrireClient
@@ -121,12 +182,14 @@ public class ActionServlet extends HttpServlet {
                     response.sendRedirect("/inscriptionSuccess.html");
                     return;
                 }
+
             }else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
                 System.out.println("ServiceMetier call without auth !");
                 request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
                 request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 return;
             }
+        //SESSION NOT NULL
         } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
             System.out.println("session already auth, ok for ServiceMetier calls.");
             //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
@@ -142,6 +205,33 @@ public class ActionServlet extends HttpServlet {
                 }
                 request.setAttribute("listeResto",restaurants);
                 request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request,response);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //authentifierLivreur
+            if(action.equals("authentifierLivreur")){
+                List<Livreur> livreurs = (List<Livreur>) session.getAttribute("livreurs");
+                List<Commande> allEnCours = null;
+                List<Commande> commandesEnCours = null;
+                List<Client> clientsEnCours = null;
+                try {
+                    allEnCours = metier.recupererLivraisonEnCours();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (Commande i : allEnCours){
+                    String commandeLivreurMail = i.getLivreur().getMail();
+                    for(Livreur j : livreurs){
+                        if(j.getMail().equals(commandeLivreurMail)){
+                            commandesEnCours.add(i);
+                            clientsEnCours.add(i.getClient());
+                        }
+                    }
+                }
+                //ecriture des donnees
+                request.setAttribute("commandesEnCours",commandesEnCours);
+                request.setAttribute("clientsEnCours",clientsEnCours);
+                request.getRequestDispatcher("/app/livraisonDirectory.jsp").forward(request,response);
                 return;
             }
             //-----------------------------------------------------------------------------------
@@ -309,6 +399,8 @@ public class ActionServlet extends HttpServlet {
             jsonRestaurant.addProperty("denomination",r.getDenomination());
             jsonRestaurant.addProperty("description",r.getDescription());
             jsonRestaurant.addProperty("adresse",r.getAdresse());
+            jsonRestaurant.addProperty("latitude",r.getLatitude());
+            jsonRestaurant.addProperty("longitude",r.getLongitude());
             jsonliste.add(jsonRestaurant);
         }
         JsonObject container = new JsonObject();
