@@ -314,6 +314,13 @@ public class ActionServlet extends HttpServlet {
                             ProduitsCommandes pc = new ProduitsCommandes(currentProduit, Integer.parseInt(paramIds.get(paramName)[0]));
                             produitscommandes.add(pc);
                         }
+                        if(produitscommandes.size()==0){
+                            System.out.println("echec d'attribution. Aucun produit choisi");
+                            request.setAttribute("errorMessage","Echec de la commande : vous n'avez rien commandé ! GustaPanda est triste...");
+                            request.setAttribute("redirectTarget","dashboard?action=authentifierClient");
+                            request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                            return;
+                        }
                     }
                 }
                 //fin for
@@ -328,7 +335,9 @@ public class ActionServlet extends HttpServlet {
                     response.sendRedirect("/dashboard?action=authentifierClient");
                 }else{
                     System.out.println("echec d'attribution.");
-                    response.sendRedirect("/");//todo: envoyer a la page d'erreur
+                    request.setAttribute("errorMessage","Echec de la commande : veuillez réessayer plus tard !");//todo: envoyer a la page d'erreur
+                    request.setAttribute("redirectTarget","dashboard?action=authentifierClient");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 }
             }
             //-----------------------------------------------------------------------------------

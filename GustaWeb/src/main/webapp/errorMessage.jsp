@@ -38,7 +38,7 @@
                     <p>${requestScope.errorMessage}</p>
                 </div>
                 <div class="col-md-8 col-md-offset-2">
-                    <a href="/" class="btn btn-primary">Retour Accueil</a>
+                    <a href="/${requestScope.redirectTarget}" class="btn btn-primary">Retour Accueil</a>
                 </div>
             </div>
         </div>

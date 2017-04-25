@@ -39,7 +39,7 @@
     <!-- groupage -->
     <div class="panel panel-default">
         <div class="panel panel-body">
-            <form action="/dashboard" class="form-horizontal"><!-- TODO: ne pas authoriser la validation si 0 articles commandés -->
+            <form action="/dashboard" method="post" class="form-horizontal"><!-- TODO: ne pas authoriser la validation si 0 articles commandés -->
                 <input type="hidden" name="action" value="attribuerLivreur">
                 <input type="hidden" name="restoID" value="${requestScope.resto.id}">
                 <input type="hidden" name="clientID" value="${sessionScope.client.id}">
