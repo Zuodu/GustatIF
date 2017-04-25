@@ -6,6 +6,8 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,10 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import dao.CommandeDAO;
 import dao.JpaUtil;
 import metier.modele.*;
 import metier.service.*;
@@ -109,7 +109,8 @@ public class ActionServlet extends HttpServlet {
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                     return;
                 }
-            }else if(action.equals("authentifierLivreur")) {
+            }
+            else if(action.equals("authentifierLivreur")) {
                 System.out.println("appel du service authentifierLivreur");
                 if(currentUserList.contains(request.getParameter("email"))){
                     System.out.println("utilisateur deja auth sur un autre servlet");
@@ -130,7 +131,7 @@ public class ActionServlet extends HttpServlet {
                 if(livreurs == null){
                     System.out.println("c'est l'admin");
                     session = request.getSession(true);
-                    session.setAttribute("user","gustatif@gustatif.com");
+                    session.setAttribute("user",email);
                     session.setAttribute("livreurs",livreurs);
                     response.sendRedirect("/");//todo : page d'admin ??
                     return;
@@ -145,32 +146,27 @@ public class ActionServlet extends HttpServlet {
                     System.out.println("livreurs trouves");
                     session = request.getSession(true);
                     session.setAttribute("user",email);
-                    session.setAttribute("livreurs",livreurs);
-                    List<Commande> allEnCours = null;
-                    List<Commande> commandesEnCours = new ArrayList<>();
-                    List<Client> clientsEnCours = new ArrayList<>();
-                    try {
-                        allEnCours = metier.recupererLivraisonEnCours();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    for (Commande i : allEnCours){
-                        String commandeLivreurMail = i.getLivreur().getMail();
-                        for(Livreur j : livreurs){
-                            if(j.getMail().equals(commandeLivreurMail)){
-                                commandesEnCours.add(i);
-                                clientsEnCours.add(i.getClient());
-                            }
-                        }
+                    session.setAttribute("id",id);
+                    List<Long> idLivreursEnLivraison = new ArrayList<>();
+                    for (Livreur i : livreurs){
+                        if(i.getStatut().equals("livraison")) idLivreursEnLivraison.add(i.getId());
                     }
                     //ecriture des donnees
-                    System.out.println("nbr commandes "+commandesEnCours.size());
-                    request.setAttribute("commandesEnCours",commandesEnCours);
-                    request.setAttribute("clientsEnCours",clientsEnCours);
-                    request.getRequestDispatcher("/app/livraisonDirectory.jsp").forward(request,response);
-                    return;
+                    System.out.println("nbr livraisons a faire "+ idLivreursEnLivraison.size());
+                    request.setAttribute("livreursEnCours",idLivreursEnLivraison);
+                    if(livreurs.get(0) instanceof Cycliste){
+                        System.out.println("auth Cycliste");
+                        request.getRequestDispatcher("/app/livraisonCycliste.jsp").forward(request,response);
+                        return;
+                    }
+                    if(livreurs.get(0) instanceof Drone){
+                        System.out.println("auth Gestionnaire");
+                        request.getRequestDispatcher("/app/livraisonGestionnaire.jsp").forward(request,response);
+                        return;
+                    }
                 }
-            }else if(action.equals("inscrireClient")){
+            }
+            else if(action.equals("inscrireClient")){
                 //-----------------------------------------------------------------------------------
                 //inscrireClient
                 System.out.println("appel du service inscrireClient");
@@ -183,7 +179,8 @@ public class ActionServlet extends HttpServlet {
                     return;
                 }
 
-            }else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
+            }
+            else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
                 System.out.println("ServiceMetier call without auth !");
                 request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
                 request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
@@ -193,10 +190,10 @@ public class ActionServlet extends HttpServlet {
         } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
             System.out.println("session already auth, ok for ServiceMetier calls.");
             //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
-
             //authentiferClient
             //-----------------------------------------------------------------------------------
             if (action.equals("authentifierClient")) {
+                System.out.println("appel du service authentifierClient avec une session");
                 List<Restaurant> restaurants = null;
                 try {
                     restaurants = metier.recupererListeRestaurants();
@@ -210,29 +207,30 @@ public class ActionServlet extends HttpServlet {
             //-----------------------------------------------------------------------------------
             //authentifierLivreur
             if(action.equals("authentifierLivreur")){
-                List<Livreur> livreurs = (List<Livreur>) session.getAttribute("livreurs");
-                List<Commande> allEnCours = null;
-                List<Commande> commandesEnCours = null;
-                List<Client> clientsEnCours = null;
+                System.out.println("appel du service authentifierLivreur avec une session");
+                List<Livreur> livreurs = null;
                 try {
-                    allEnCours = metier.recupererLivraisonEnCours();
+                    livreurs = metier.authentifierLivreur((String)session.getAttribute("user"),(long)session.getAttribute("id"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                for (Commande i : allEnCours){
-                    String commandeLivreurMail = i.getLivreur().getMail();
-                    for(Livreur j : livreurs){
-                        if(j.getMail().equals(commandeLivreurMail)){
-                            commandesEnCours.add(i);
-                            clientsEnCours.add(i.getClient());
-                        }
-                    }
+                List<Long> idLivreursEnLivraison = new ArrayList<>();
+                for (Livreur i : livreurs){
+                    if(i.getStatut().equals("livraison")) idLivreursEnLivraison.add(i.getId());
                 }
                 //ecriture des donnees
-                request.setAttribute("commandesEnCours",commandesEnCours);
-                request.setAttribute("clientsEnCours",clientsEnCours);
-                request.getRequestDispatcher("/app/livraisonDirectory.jsp").forward(request,response);
-                return;
+                System.out.println("nbr livraisons a faire "+ idLivreursEnLivraison.size());
+                request.setAttribute("livreursEnCours",idLivreursEnLivraison);
+                if(livreurs.get(0) instanceof Cycliste){
+                    System.out.println("auth Cycliste");
+                    request.getRequestDispatcher("/app/livraisonCycliste.jsp").forward(request,response);
+                    return;
+                }
+                if(livreurs.get(0) instanceof Drone){
+                    System.out.println("auth Gestionnaire");
+                    request.getRequestDispatcher("/app/livraisonGestionnaire.jsp").forward(request,response);
+                    return;
+                }
             }
             //-----------------------------------------------------------------------------------
             //recupererListeRestaurants
@@ -273,7 +271,7 @@ public class ActionServlet extends HttpServlet {
                 return;
             }
             //-----------------------------------------------------------------------------------
-            //submitCommande
+            //attribuerLivreur
             //-----------------------------------------------------------------------------------
             if(action.equals("attribuerLivreur")){
                 /*TODO: alors ca c compliqué... il faut vérifier que les arguments sont valides :
@@ -327,11 +325,47 @@ public class ActionServlet extends HttpServlet {
                 }
                 if(livreur != null){
                     System.out.println("attribution to : "+livreur.getId());
-                    response.sendRedirect("/");
+                    response.sendRedirect("/dashboard?action=authentifierClient");
                 }else{
                     System.out.println("echec d'attribution.");
-                    response.sendRedirect("/");
+                    response.sendRedirect("/");//todo: envoyer a la page d'erreur
                 }
+            }
+            //-----------------------------------------------------------------------------------
+            //recupererCommandeParID
+            if(action.equals("recupererCommande")){
+                System.out.println("Appel du service recupererCommande");
+                long livreurID = Long.parseLong(request.getParameter("livreurID"));
+                Commande commande = null;
+                Restaurant restaurant = null;
+                try {
+                    commande = metier.recupererCommande(livreurID);
+                    restaurant = metier.recupererRestaurantParIdProduit(
+                            ((ProduitsCommandes) commande.getListeProduits().get(0)).getProduit().getId().longValue());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                response.setContentType("application/json");
+                response.setCharacterEncoding("ISO-8859-15");
+                PrintWriter pw = response.getWriter();
+                printCommande(pw, commande,restaurant);
+                pw.close();
+                System.out.println("json print over.");
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //cloturerLivraison
+            if(action.equals("cloturerCommande")){
+                System.out.println("appel du service cloturerCommande");
+                Commande commandeACloturer = null;
+                try {
+                    commandeACloturer = metier.recupererCommande(Long.parseLong(request.getParameter("livreurID")));
+                    metier.cloturerLivraison(commandeACloturer.getId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                response.sendRedirect("/dashboard?action=authentifierLivreur");
+                return;
             }
             //-----------------------------------------------------------------------------------
             //deconnexion
@@ -340,8 +374,9 @@ public class ActionServlet extends HttpServlet {
                 System.out.println("appel du service deconnexion");
                 session.invalidate();
                 response.sendRedirect("/");
+                return;
             }
-        }
+        }//todo : bonus si on veut faire la page d'admin
     }
 
     /**
@@ -408,4 +443,29 @@ public class ActionServlet extends HttpServlet {
         pw.println(gson.toJson(container));
     }
 
+    private void printCommande(PrintWriter pw,Commande commande,Restaurant restaurant)
+    {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject jsonCommande = new JsonObject();
+        JsonArray jsonListeProduits = new JsonArray();
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy à HH:mm");
+        jsonCommande.addProperty("date",df.format(commande.getDateCommmande()));
+        jsonCommande.addProperty("livreur",commande.getLivreur().getMail()+" (no "+commande.getLivreur().getId()+")");
+        jsonCommande.addProperty("livreurLat",commande.getLivreur().getLatitude());
+        jsonCommande.addProperty("livreurLng",commande.getLivreur().getLongitude());
+        jsonCommande.addProperty("restaurant",restaurant.getDenomination());
+        jsonCommande.addProperty("restaurantLat",restaurant.getLatitude());
+        jsonCommande.addProperty("restaurantLng",restaurant.getLongitude());
+        jsonCommande.addProperty("client",commande.getClient().getNom()+" "+commande.getClient().getPrenom());
+        jsonCommande.addProperty("clientAdr",commande.getClient().getAdresse());
+        jsonCommande.addProperty("clientLat",commande.getClient().getLatitude());
+        jsonCommande.addProperty("clientLng",commande.getClient().getLongitude());
+        jsonCommande.addProperty("total",commande.getPrixTotal());
+        for(ProduitsCommandes i : commande.getListeProduits()){
+            JsonPrimitive string = new JsonPrimitive(i.toString());
+            jsonListeProduits.add(string);
+        }
+        jsonCommande.add("produitsCommandes",jsonListeProduits);
+        pw.println(gson.toJson(jsonCommande));
+    }
 }

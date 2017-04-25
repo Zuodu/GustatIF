@@ -25,19 +25,99 @@
 <div class="container" style="padding-top: 50px">
     <div class="page-header">
         <h1>Choisissez votre restaurant !</h1>
-        <div class="lead">Découvrez une description de nos établissements et choisissez-en un !</div>
+        <div class="lead">Vous avez 1 requete en cours de livraison.</div>
     </div>
     <div class="panel panel-default">
-        <div class="panel panel-body">
-                <!-- debut boucle -->
-
-                <!-- fin boucle -->
-
+        <div class="panel-heading text-left">
+            <form action="#" method="post" class="form-inline" id="formCommande">
+                <span>Choix de la livraison : </span>
+                <div class="form-group">
+                    <input type="hidden" name="action" value="cloturerCommande">
+                </div>
+                <div class="form-group">
+                    <label for="commandeControl" class="sr-only">select</label>
+                    <select form="formCommande" class="form-control" id="commandeControl" onchange="switchCommande();">
+                        <option id="toDisable"></option>
+                        <option value="3">Commande 1</option>
+                        <option value="4">Commande 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="commandeSubmit" class="sr-only">submit</label>
+                    <input type="submit" id="commandeSubmit" class="btn btn-primary" value="Clôturer" disabled="">
+                </div>
+            </form>
+        </div>
+        <div class="panel-body text-left">
+            <h4>détails de la commande :</h4>
+            <dl class="dl-horizontal">
+                <dt>Date</dt>
+                <dd></dd>
+                <dt>Livreur</dt>
+                <dd>0</dd>
+                <dt>Restaurant</dt>
+                <dd>0</dd>
+                <dt>Client</dt>
+                <dd>0</dd>
+                <dt>Commande</dt>
+                <dd>0</dd>
+                <dd>0</dd>
+                <dt>Total</dt>
+                <dd>0</dd>
+            </dl>
         </div>
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Itinéraire</div>
+        <div class="panel-body" id="googleMaps" style="height: 600px;"></div>
+    </div>
 </div>
-</body>
 <script>
+    function switchCommande(){
+        $("#toDisable").attr("disabled","disabled");
+        $("#commandeSubmit").removeAttr("disabled");
+        var options = document.getElementById("commandeControl").options;
+        var commandeID = options[options['selectedIndex']].value;
+    }
 
+    //-----------------------------------------------------------------------------------
+    var map;
+    function initMap() {
+        var markerArray = [];
+        var directionsService = new google.maps.DirectionsService;
+        map = new google.maps.Map(document.getElementById("googleMaps"),{
+            center : {lat : 45.768477, lng : 4.873731},
+            zoom : 14
+        });
+        var marker = new google.maps.Marker({
+            position : {lat:45.781256,lng:4.873594},
+            map:map,
+            title: "Hihihi",
+            icon: {url: './image/bird.png', scaledSize: new google.maps.Size(32, 32)}
+        });
+        var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+        calculateAndDisplayRoute(directionsDisplay, directionsService);
+    }
+//-----------------------------------------------------------------------------------
+    function calculateAndDisplayRoute(directionsDisplay, directionsService) {
+
+        directionsService.route({
+            origin: {lat:45.779041, lng:4.879331},
+            destination: {lat:45.7741345,lng:4.8700299},
+            travelMode: 'WALKING',
+            waypoints: [{location:{lat:45.776952, lng:4.874762},stopover:true}]
+        }, function(response, status) {
+            // Route the directions and pass the response to a function to create
+            // markers for each step.
+            if (status === 'OK') {
+                directionsDisplay.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+    // key : AIzaSyCJfG6DckT0nIh8qRsNe7wobF7XpGuJYy0
 </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJfG6DckT0nIh8qRsNe7wobF7XpGuJYy0&callback=initMap" async defer></script>
+</body>
 </html>
