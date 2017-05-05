@@ -255,6 +255,7 @@ public class ActionServlet extends HttpServlet {
             //-----------------------------------------------------------------------------------
             if(action.equals("afficherCarte")){
                 System.out.println("appel du service afficherCarte");
+                //
                 long restoId = Long.parseLong(request.getParameter("restoId"));
                 Restaurant resto = null;
                 List<Produit> produits = null;
@@ -267,6 +268,7 @@ public class ActionServlet extends HttpServlet {
                 request.setAttribute("resto",resto);
                 request.setAttribute("carte",produits);
                 request.setAttribute("chargeMaxLimit",CHARGE_MAX_LIMIT);
+                //
                 request.getRequestDispatcher("/app/carteDirectory.jsp").forward(request,response);
                 return;
             }

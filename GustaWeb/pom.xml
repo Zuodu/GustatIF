@@ -33,17 +33,28 @@
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.13.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
             <version>10.13.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbynet</artifactId>
+            <version>10.13.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp.jstl</groupId>
+            <artifactId>jstl-api</artifactId>
+            <version>1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet.jsp</groupId>
+                    <artifactId>jsp-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
             <version>10.13.1.1</version>
         </dependency>
         <dependency>
@@ -64,7 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.0</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
