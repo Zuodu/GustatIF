@@ -1,0 +1,20 @@
+Thu May 04 11:17:35 CEST 2017 : Apache Derby Network Server - 10.11.1.2 - (1629631) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Thu May 04 11:17:37 CEST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-015b-d2c0-14b7-ffffe8efdd14 
+on database directory /Users/zuoduzuodu/Documents/Projets/gustatifWeb/BD/BDGustatIF with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+Loaded from file:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/db/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_121-b13
+user.dir=/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/db
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.12.4
+derby.system.home=/Users/zuoduzuodu/Documents/Projets/gustatifWeb/BD
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu May 04 11:22:59 CEST 2017: Shutting down Derby engine
+----------------------------------------------------------------
+Thu May 04 11:22:59 CEST 2017:
+Shutting down instance a816c00e-015b-d2c0-14b7-ffffe8efdd14 on database directory /Users/zuoduzuodu/Documents/Projets/gustatifWeb/BD/BDGustatIF with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+----------------------------------------------------------------
