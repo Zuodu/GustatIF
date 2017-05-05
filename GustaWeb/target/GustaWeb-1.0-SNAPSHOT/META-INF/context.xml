@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context path="/GustaWeb">
-  <Resource auth="Container" driverClassName="org.apache.derby.jdbc.ClientDriver" maxActive="20" maxIdle="10" maxWait="-1" name="BDGustatIF" password="lyon" type="javax.sql.DataSource" url="jdbc:derby://localhost:1527/BDGustatIF" username="insa"/>
-</Context>

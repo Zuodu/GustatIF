@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Success !</title>
+    <meta name="viewport" content="width=device-width">
+    <script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+    <link rel="shortcut icon" href="/resource/favicon.ico" />
+</head>
+<body>
+<script>window.setTimeout(function(){
+
+    $.ajax({
+        url: '/dashboard',
+        type: 'GET',
+        data: {
+            action: 'gotoUserDashboard'
+        }
+    })}, 3000);</script>
+Client authentifié, redirection...<br>
+<a href="/">revenir a l'index</a>
+<form action="/app/listeRestaurants.html" method="post">
+    <input type="hidden" name="action" value="afficherUser">
+    <input type="submit" value="afficher Utilisateur">
+</form>
+</body>
+</html>

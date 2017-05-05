@@ -1,0 +1,14 @@
+Fri May 05 15:25:57 CEST 2017 : Apache Derby Serveur réseau - 10.8.3.2 - (1557835) démarré et prêt à accepter les connexions sur le port 1527
+----------------------------------------------------------------
+Fri May 05 15:29:45 CEST 2017:
+Amorçage de Derby version The Apache Software Foundation - Apache Derby - 10.8.3.2 - (1557835) : instance a816c00e-015b-d8c9-d277-fffff8d0b940 
+dans le répertoire de base de données C:\Temp\B3142\GustatIF\GustaWeb\BD\BDGustatIF  avec le chargeur de classe sun.misc.Launcher$AppClassLoader@1f183871
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_71-b14
+user.dir=C:\Program Files\Java\jdk1.7.0_71\db
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=C:\Temp\B3142\GustatIF\GustaWeb\BD
+Chargeur de classe de la base de données démarré - derby.database.classpath=''
