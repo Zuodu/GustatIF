@@ -1,7 +1,4 @@
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,13 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.gson.*;
-import dao.CommandeDAO;
 import dao.JpaUtil;
-import metier.modele.*;
 import metier.service.*;
 
-import static util.Saisie.pause;
 
 public class ActionServlet extends HttpServlet {
 
@@ -58,68 +51,66 @@ public class ActionServlet extends HttpServlet {
 //-----------------------------------------------------------------------------------
         if (session == null) {
             //----------------------------------------------------------------------------
-            if (action.equals("authentifierClient")) {
-                if (currentUserList.contains(request.getParameter("email"))) {
-                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
-                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                    return;
-                }
-                AuthentifierClient act = new AuthentifierClient();
-                if(act.execute(request,metier)){
-                    request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request, response);
-                } else {
-                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                    return;
-                }
-            }
-            //----------------------------------------------------------------------------
-            else if(action.equals("authentifierLivreur")) {
-                if(currentUserList.contains(request.getParameter("email"))){
-                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
-                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                    return;
-                }
-                AuthentifierLivreur act = new AuthentifierLivreur();
-                int code = act.execute(request,metier);
-                switch (code){
-                    case 0:
-                        response.sendRedirect("/");//todo : page d'admin ??
-                        break;
-                    case 1:
-                        request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                        break;
-                    case 2:
-                        request.getRequestDispatcher("/app/livraisonCycliste.jsp").forward(request,response);
-                        break;
-                    case 3:
-                        request.getRequestDispatcher("/app/livraisonGestionnaire.jsp").forward(request,response);
-                        break;
-                    default:
-                        request.setAttribute("errorMessage","Une erreur inattendue s'est produite. Veuillez essayer plus tard !");
-                        request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                }
-                return;
-            }
-            //----------------------------------------------------------------------------
-            else if(action.equals("inscrireClient")){
-                InscrireClient act = new InscrireClient();
-                if(act.execute(request,metier)){
-                    response.sendRedirect("/inscriptionSuccess.html");
-                    return;
-                }else{
-                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                }
-                return;
-            }
-            //----------------------------------------------------------------------------
-            else{
-                System.out.println("[Servlet] Bad Servlet call : no authentification");
-                request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
-                request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                return;
-            }
-        //SESSION NOT NULL
+            switch (action) {
+                case "authentifierClient":
+                    {
+                        if (currentUserList.contains(request.getParameter("email"))) {
+                            request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
+                            request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                            return;
+                        }       AuthentifierClient act = new AuthentifierClient();
+                        if(act.execute(request,metier)){
+                            request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request, response);
+                        } else {
+                            request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                            return;
+                        }       break;
+                    }
             //-----------------------------------------------------------------------------------
+                case "authentifierLivreur":
+                {
+                    if(currentUserList.contains(request.getParameter("email"))){
+                        request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
+                        request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                        return;
+                    }
+                    AuthentifierLivreur act = new AuthentifierLivreur();
+                    int code = act.execute(request,metier);
+                    switch (code){
+                        case 0:
+                            response.sendRedirect("/");//todo : page d'admin ??
+                            break;
+                        case 1:
+                            request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                            break;
+                        case 2:
+                            request.getRequestDispatcher("/app/livraisonCycliste.jsp").forward(request,response);
+                            break;
+                        case 3:
+                            request.getRequestDispatcher("/app/livraisonGestionnaire.jsp").forward(request,response);
+                            break;
+                        default:
+                            request.setAttribute("errorMessage","Une erreur inattendue s'est produite. Veuillez essayer plus tard !");
+                            request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                    }
+                    return;
+                }
+                case "inscrireClient":
+                {
+                    InscrireClient act = new InscrireClient();
+                    if(act.execute(request,metier)){
+                        response.sendRedirect("/inscriptionSuccess.html");
+                        return;
+                    }else{
+                        request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                    }
+                    return;
+                }
+                default:
+                    System.out.println("[Servlet] Bad Servlet call : no authentification");
+                    request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+            }
         } else if (session.getAttribute("user") != null) {
             System.out.println("[Servlet] session is alive, proceed to service execution.");
             //authentiferClient
@@ -148,24 +139,6 @@ public class ActionServlet extends HttpServlet {
                 }
                 return;
             }
-            //-----------------------------------------------------------------------------------
-            //recupererListeRestaurants
-            //-----------------------------------------------------------------------------------
-            /*if (action.equals("recupererListeRestaurants")) {
-                System.out.println("Appel du service recupererListeRestaurants");
-                List<Restaurant> restaurants = null;
-                try {
-                    restaurants = metier.recupererListeRestaurants();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                response.setContentType("application/json");
-                response.setCharacterEncoding("ISO-8859-1");
-                PrintWriter pw = response.getWriter();
-                printListeRestaurants(pw, restaurants);
-                pw.close();
-                return;
-            }*/
             //-----------------------------------------------------------------------------------
             //recupererRestaurant
             //-----------------------------------------------------------------------------------
@@ -213,7 +186,6 @@ public class ActionServlet extends HttpServlet {
             if(action.equals("deconnexion")){
                 session.invalidate();
                 response.sendRedirect("/");
-                return;
             }
         }//todo : bonus si on veut faire la page d'admin
     }

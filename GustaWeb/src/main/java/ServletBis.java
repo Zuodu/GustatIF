@@ -180,14 +180,13 @@ public class ServletBis extends HttpServlet {
                 }
 
             }
-            else{//SI LE CLIENT VEUT FAIRE UN AUTRE CALL SANS ETRE AUTH OU UN MAUVAIS SERVICE
+            else{
                 System.out.println("ServiceMetier call without auth !");
                 request.setAttribute("errorMessage","Vous n'êtes pas authentifié ! Veuillez vous connecter avec votre compte.");
                 request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 return;
             }
-            //SESSION NOT NULL
-        } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
+        } else if (session.getAttribute("user") != null) {
             System.out.println("session already auth, ok for ServiceMetier calls.");
             //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
             //authentiferClient
