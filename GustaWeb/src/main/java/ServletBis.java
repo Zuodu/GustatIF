@@ -73,39 +73,60 @@ public class ServletBis extends HttpServlet {
             //SI LE CLIENT VEUT S'AUTENTIFIER
             if (action.equals("authentifierClient")) {
                 // SI LE CLIENT A DEJA UNE SESSION AUTRE PART EN COURS
-                    AuthentifierClientAction clientAction= new AuthentifierClientAction();
-                    boolean ans=clientAction.sessionExists(request);
-                    if (ans==true){
+                System.out.println("appel du service authentifierClient");
+                if (currentUserList.contains(request.getParameter("email"))) {
+                    System.out.println("utilisateur deja auth sur un autre servlet");
+                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                    }
                     return;
                 }
-                AuthentifierClientAction authenAction= new AuthentifierClientAction();
-                Client currentUser;
-                currentUser = authenAction.authentification(request,metier);
-                
-                
+                String email = request.getParameter("email");
+                long id = Long.parseLong(request.getParameter("pwd"));
+                System.out.println("de " + email + id);
+                Client currentUser = null;
+
+                try {
+                    currentUser = metier.authentifierClient(email, id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 if (currentUser != null) { // SI YA BIEN CE COMPTE
-                    authenAction.alreadyAccount(request, session, metier, currentUser);
+                    session = request.getSession(true);
+                    session.setAttribute("user", email);
+                    session.setAttribute("client",currentUser);
+                    List<Restaurant> restaurants = null;
+                    try {
+                        restaurants = metier.recupererListeRestaurants();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    request.setAttribute("listeResto",restaurants);
                     request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request,response);
                     return;
                 } else { //SI YA PAS CE COMPTE
-                    authenAction.noAccount(request);
+                    System.out.println("This account does not exist, redirecting...");
+                    request.setAttribute("errorMessage","Ce compte n'existe pas ! Veuillez réessayer.");
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-         
+                    return;
                 }
             }
             else if(action.equals("authentifierLivreur")) {
-                    AuthentifierLivreurAction livreurAction= new AuthentifierLivreurAction();
-                    boolean ans=livreurAction.sessionExists(request);
-                    if (ans==true){
+                System.out.println("appel du service authentifierLivreur");
+                if(currentUserList.contains(request.getParameter("email"))){
+                    System.out.println("utilisateur deja auth sur un autre servlet");
+                    request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
                     request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
-                    }
                     return;
                 }
-                AuthentifierLivreurAction livreurAction= new AuthentifierLivreurAction();
-                List<Livreur> livreurs;
-                livreurs= livreurAction.authentification(request, metier);
+                String email = request.getParameter("email");
+                long id = Long.parseLong(request.getParameter("pwd"));
+                System.out.println("de " + email + id);
+                List<Livreur> livreurs = null;
+                try {
+                    livreurs = metier.authentifierLivreur(email,id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 //ADMIN
                 if(livreurs == null){
                     System.out.println("c'est l'admin");
@@ -165,7 +186,7 @@ public class ServletBis extends HttpServlet {
                 request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 return;
             }
-        //SESSION NOT NULL
+            //SESSION NOT NULL
         } else if (session.getAttribute("user") != null) { // SI LA SESSION EN COURS A DEJA UN NOM D'UTILISATEUR
             System.out.println("session already auth, ok for ServiceMetier calls.");
             //TRAITEMENT EN FONCTION DE L'ACTION DESIREE :
