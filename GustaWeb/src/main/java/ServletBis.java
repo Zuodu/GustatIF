@@ -432,50 +432,50 @@ public class ServletBis extends HttpServlet {
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
     //PRIVATE
+//
+//    private void printListeRestaurants(PrintWriter pw,List<Restaurant> liste)
+//    {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        JsonArray jsonliste = new JsonArray();
+//        for(Restaurant r: liste)
+//        {
+//            JsonObject jsonRestaurant = new JsonObject();
+//            jsonRestaurant.addProperty("id",r.getId());
+//            jsonRestaurant.addProperty("denomination",r.getDenomination());
+//            jsonRestaurant.addProperty("description",r.getDescription());
+//            jsonRestaurant.addProperty("adresse",r.getAdresse());
+//            jsonRestaurant.addProperty("latitude",r.getLatitude());
+//            jsonRestaurant.addProperty("longitude",r.getLongitude());
+//            jsonliste.add(jsonRestaurant);
+//        }
+//        JsonObject container = new JsonObject();
+//        container.add("restaurants",jsonliste);
+//        pw.println(gson.toJson(container));
+//    }
 
-    private void printListeRestaurants(PrintWriter pw,List<Restaurant> liste)
-    {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonArray jsonliste = new JsonArray();
-        for(Restaurant r: liste)
-        {
-            JsonObject jsonRestaurant = new JsonObject();
-            jsonRestaurant.addProperty("id",r.getId());
-            jsonRestaurant.addProperty("denomination",r.getDenomination());
-            jsonRestaurant.addProperty("description",r.getDescription());
-            jsonRestaurant.addProperty("adresse",r.getAdresse());
-            jsonRestaurant.addProperty("latitude",r.getLatitude());
-            jsonRestaurant.addProperty("longitude",r.getLongitude());
-            jsonliste.add(jsonRestaurant);
-        }
-        JsonObject container = new JsonObject();
-        container.add("restaurants",jsonliste);
-        pw.println(gson.toJson(container));
-    }
-
-    private void printCommande(PrintWriter pw,Commande commande,Restaurant restaurant)
-    {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonObject jsonCommande = new JsonObject();
-        JsonArray jsonListeProduits = new JsonArray();
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy à HH:mm");
-        jsonCommande.addProperty("date",df.format(commande.getDateCommmande()));
-        jsonCommande.addProperty("livreur",commande.getLivreur().getMail()+" (no "+commande.getLivreur().getId()+")");
-        jsonCommande.addProperty("livreurLat",commande.getLivreur().getLatitude());
-        jsonCommande.addProperty("livreurLng",commande.getLivreur().getLongitude());
-        jsonCommande.addProperty("restaurant",restaurant.getDenomination());
-        jsonCommande.addProperty("restaurantLat",restaurant.getLatitude());
-        jsonCommande.addProperty("restaurantLng",restaurant.getLongitude());
-        jsonCommande.addProperty("client",commande.getClient().getNom()+" "+commande.getClient().getPrenom());
-        jsonCommande.addProperty("clientAdr",commande.getClient().getAdresse());
-        jsonCommande.addProperty("clientLat",commande.getClient().getLatitude());
-        jsonCommande.addProperty("clientLng",commande.getClient().getLongitude());
-        jsonCommande.addProperty("total",commande.getPrixTotal());
-        for(ProduitsCommandes i : commande.getListeProduits()){
-            JsonPrimitive string = new JsonPrimitive(i.toString());
-            jsonListeProduits.add(string);
-        }
-        jsonCommande.add("produitsCommandes",jsonListeProduits);
-        pw.println(gson.toJson(jsonCommande));
-    }
+//    private void printCommande(PrintWriter pw,Commande commande,Restaurant restaurant)
+//    {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        JsonObject jsonCommande = new JsonObject();
+//        JsonArray jsonListeProduits = new JsonArray();
+//        DateFormat df = new SimpleDateFormat("MM/dd/yyyy à HH:mm");
+//        jsonCommande.addProperty("date",df.format(commande.getDateCommmande()));
+//        jsonCommande.addProperty("livreur",commande.getLivreur().getMail()+" (no "+commande.getLivreur().getId()+")");
+//        jsonCommande.addProperty("livreurLat",commande.getLivreur().getLatitude());
+//        jsonCommande.addProperty("livreurLng",commande.getLivreur().getLongitude());
+//        jsonCommande.addProperty("restaurant",restaurant.getDenomination());
+//        jsonCommande.addProperty("restaurantLat",restaurant.getLatitude());
+//        jsonCommande.addProperty("restaurantLng",restaurant.getLongitude());
+//        jsonCommande.addProperty("client",commande.getClient().getNom()+" "+commande.getClient().getPrenom());
+//        jsonCommande.addProperty("clientAdr",commande.getClient().getAdresse());
+//        jsonCommande.addProperty("clientLat",commande.getClient().getLatitude());
+//        jsonCommande.addProperty("clientLng",commande.getClient().getLongitude());
+//        jsonCommande.addProperty("total",commande.getPrixTotal());
+//        for(ProduitsCommandes i : commande.getListeProduits()){
+//            JsonPrimitive string = new JsonPrimitive(i.toString());
+//            jsonListeProduits.add(string);
+//        }
+//        jsonCommande.add("produitsCommandes",jsonListeProduits);
+//        pw.println(gson.toJson(jsonCommande));
+//    }
 }

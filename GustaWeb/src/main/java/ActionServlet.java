@@ -78,7 +78,7 @@ public class ActionServlet extends HttpServlet {
                     int code = act.execute(request,metier);
                     switch (code){
                         case 0:
-                            response.sendRedirect("/");//todo : page d'admin ??
+                            response.sendRedirect("/app/admin.html");//todo : page d'admin ??
                             break;
                         case 1:
                             request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
@@ -181,13 +181,45 @@ public class ActionServlet extends HttpServlet {
                 return;
             }
             //-----------------------------------------------------------------------------------
+            //chargerInfos
+            //-----------------------------------------------------------------------------------
+            if(action.equals("chargerInfos")){
+                AdminServices act = new AdminServices();
+                act.execute(response,0,metier);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //chargerRestaurants
+            //-----------------------------------------------------------------------------------
+            if(action.equals("chargerRestos")){
+                AdminServices act = new AdminServices();
+                act.execute(response,1,metier);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //chargerLivreurs
+            //-----------------------------------------------------------------------------------
+            if(action.equals("chargerLivreurs")){
+                AdminServices act = new AdminServices();
+                act.execute(response,2,metier);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //chargerLivraisons
+            //-----------------------------------------------------------------------------------
+            if(action.equals("chargerLivraisons")){
+                AdminServices act = new AdminServices();
+                act.execute(response,3,metier);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
             //deconnexion
             //-----------------------------------------------------------------------------------
             if(action.equals("deconnexion")){
                 session.invalidate();
                 response.sendRedirect("/");
             }
-        }//todo : bonus si on veut faire la page d'admin
+        }
     }
 
     /**

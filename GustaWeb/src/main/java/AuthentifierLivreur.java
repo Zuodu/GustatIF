@@ -43,7 +43,7 @@ class AuthentifierLivreur {
             System.out.println("[AuthentifierLivreur] admin auth.");
             HttpSession session = request.getSession(true);
             session.setAttribute("user", email);
-            session.setAttribute("livreurs", null);
+            session.setAttribute("id", id);
             return 0;
         }
         if (livreurs.isEmpty()) {
