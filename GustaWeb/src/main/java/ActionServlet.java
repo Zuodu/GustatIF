@@ -14,7 +14,7 @@ public class ActionServlet extends HttpServlet {
 
     ServiceMetier metier;
     public static Set<String> currentUserList = new HashSet<>();
-    final static int CHARGE_MAX_LIMIT = 8000;
+    static int CHARGE_MAX_LIMIT = 8000;
 
     @Override
     public void init() throws ServletException {

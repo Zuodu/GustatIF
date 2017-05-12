@@ -3,16 +3,6 @@
     <output-path>$PROJECT_DIR$/target</output-path>
     <root id="archive" name="GustaWeb-1.0-SNAPSHOT.war">
       <element id="artifact" artifact-name="GustaWeb:war exploded" />
-      <element id="directory" name="WEB-INF">
-        <element id="directory" name="classes">
-          <element id="library" level="application" name="jquery-1.12.1" />
-          <element id="library" level="application" name="bootstrap" />
-        </element>
-        <element id="directory" name="lib">
-          <element id="library" level="project" name="com.google.maps:google-maps-services:0.1.17" />
-          <element id="library" level="project" name="javax.servlet:jstl:1.2" />
-        </element>
-      </element>
     </root>
   </artifact>
 </component>
