@@ -9,9 +9,11 @@ import java.io.IOException;
  * Ce filtre empeche des requetes directement dans "/app".
  */
 public class AuthFilter implements Filter {
+    @Override
     public void destroy() {
     }
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
@@ -32,6 +34,7 @@ public class AuthFilter implements Filter {
         }
     }
 
+    @Override
     public void init(FilterConfig config) throws ServletException {
 
     }
