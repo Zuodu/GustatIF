@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -78,7 +79,7 @@ public class ActionServlet extends HttpServlet {
                     int code = act.execute(request,metier);
                     switch (code){
                         case 0:
-                            response.sendRedirect("/app/admin.html");//todo : page d'admin ??
+                            response.sendRedirect("/app/admin.html");
                             break;
                         case 1:
                             request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);

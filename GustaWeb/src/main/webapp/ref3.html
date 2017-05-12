@@ -30,6 +30,13 @@
     <!-- GROUPE DE PANNEAUX -->
     <div class="panel-group">
         <div class="panel panel-default">
+            <div class="panel-body">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup">
+                    Changer le poids MAX toléré
+                </button>
+            </div>
+        </div>
+        <div class="panel panel-default">
             <div>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#infos" role="tab" data-toggle="tab" onclick="chargement('infos');">Infos</a></li>
@@ -69,7 +76,42 @@
         </div>
     </div>
 </div>
+<!-- modal -->
+<div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Changement du Poids Max toléré</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary">Accepter</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
+    function getPMax(){
+        $.ajax({
+            url: '/dashboard',
+            type: 'POST',
+            data: {
+                action: 'getPoidsMax'
+            },
+            dataType : 'json'
+        })
+            .done(function(data){
+                console.log(data);
+            })
+            .fail(function(){
+                $("#error").html("erreur de chargement");
+            })
+    }
+
     function chargement(string) {
         var activeNode = $('#'+string)[0];
         console.log(activeNode.id);
