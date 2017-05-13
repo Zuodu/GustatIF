@@ -157,7 +157,7 @@ public class ActionServlet extends HttpServlet {
                 int code = act.execute(request, metier);
                 switch (code){
                     case 0:
-                        response.sendRedirect("/dashboard?action=authentifierClient");
+                        request.getRequestDispatcher("/app/commandeSuccess.html").forward(request,response);
                         break;
                     case 1:
                         request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
@@ -211,6 +211,22 @@ public class ActionServlet extends HttpServlet {
             if(action.equals("chargerLivraisons")){
                 AdminServices act = new AdminServices();
                 act.execute(response,3,metier);
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //getPoids
+            //-----------------------------------------------------------------------------------
+            if(action.equals("getPoids")){
+                response.setContentType("text/html");
+                response.getWriter().write(Integer.toString(CHARGE_MAX_LIMIT));
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //getPoids
+            //-----------------------------------------------------------------------------------
+            if(action.equals("setPoids")){
+                CHARGE_MAX_LIMIT = Integer.parseInt(request.getParameter("poids"));
+                System.out.println("[Servlet] update of CHARGE_MAX_LIMIT to "+CHARGE_MAX_LIMIT);
                 return;
             }
             //-----------------------------------------------------------------------------------
