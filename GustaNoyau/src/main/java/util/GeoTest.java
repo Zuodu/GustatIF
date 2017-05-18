@@ -16,7 +16,7 @@ import com.google.maps.model.TravelMode;
  */
 public class GeoTest {
 
-    final static String MA_CLE_GOOGLE_API = "AIzaSyDcVVJjfmxsNdbdUYeg9MjQoJJ6THPuap4";
+    final static String MA_CLE_GOOGLE_API = "AIzaSyCJfG6DckT0nIh8qRsNe7wobF7XpGuJYy0";
 
     final static GeoApiContext MON_CONTEXTE_GEOAPI = new GeoApiContext().setApiKey(MA_CLE_GOOGLE_API);
 

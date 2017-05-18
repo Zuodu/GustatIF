@@ -5,6 +5,7 @@
  */
 package vue;
 
+import com.google.maps.model.LatLng;
 import dao.*;
 import java.util.ArrayList;
 import metier.modele.*;
@@ -22,9 +23,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
         JpaUtil.init();
         ServiceMetier sm = new ServiceMetier();
+        ServiceTechnique st = new ServiceTechnique();
         boolean stay = true, stayClient = false, stayLivreur=false;
         Client client = null; boolean clientConnecte = false;
-        
+        System.out.println("essai GeoTest");
+        LatLng a = st.calculerLatLng("20 Avenue Albert Einstein, Villeurbanne");
+        System.out.println(a.toString());
         int codeOp;
         while(stay){
             System.out.println("####################");
