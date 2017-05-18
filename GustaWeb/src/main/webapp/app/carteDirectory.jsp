@@ -50,7 +50,7 @@
                             <span class="hidden">${plat.poids}</span>
                         </label>
                         <div class="col-md-4">
-                            <input type="number" class="form-control" id="lab${plat.id}" name="${plat.id}" onclick="refreshInfo();"
+                            <input type="number" min="0" class="form-control" id="lab${plat.id}" name="${plat.id}" onclick="refreshInfo();"
                                    style="width: 20%" placeholder="0" value="0">
                         </div>
                     </div>
