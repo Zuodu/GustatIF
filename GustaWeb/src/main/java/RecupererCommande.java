@@ -19,6 +19,9 @@ class RecupererCommande {
         Restaurant restaurant = null;
         try {
             commande = metier.recupererCommande(livreurID);
+            if(commande.getListeProduits().size() == 0){
+                System.out.println("liste produit vide");
+            }
             restaurant = metier.recupererRestaurantParIdProduit(commande.getListeProduits().get(0).getProduit().getId());
         } catch (Exception e) {
             e.printStackTrace();

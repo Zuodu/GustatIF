@@ -61,7 +61,7 @@
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped active" style="width:0%">Poids max</div>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="validate">Valider la commande</button>
+                        <button type="submit" class="btn btn-primary" id="validate" disabled="disabled">Valider la commande</button>
                     </div>
                 </div>
             </form>
@@ -75,6 +75,7 @@
         var poids = 0;
         var itemList = document.getElementsByClassName("menuItem");
         var quantite;
+        var lock = false;
         for(var i=0;i<itemList.length; i++) {
             quantite = parseInt(itemList[i].getElementsByTagName("input")[0].value);
             total += parseInt(itemList[i].getElementsByTagName("span")[0].innerHTML) * quantite;
@@ -84,13 +85,20 @@
         document.getElementsByClassName("well-sm")[0].innerHTML="Prix total : "+total+" ¤";
         var pourcent = (poids/${requestScope.chargeMaxLimit})*100;
         if(pourcent >= 100){
+            lock = true;
             document.getElementsByClassName("progress-bar-striped")[0].classList.add("progress-bar-danger");
             $('#validate').attr("disabled","disabled");
         }else{
+            lock = false;
             document.getElementsByClassName("progress-bar-striped")[0].classList.remove("progress-bar-danger");
             $('#validate').removeAttr("disabled");
         }
         document.getElementsByClassName("progress-bar-striped")[0].style.width = pourcent+"%";
+        if(total <= 0){
+            $('#validate').attr("disabled","disabled");
+        }else if(lock === false){
+            $('#validate').removeAttr("disabled");
+        }
     }
 </script>
 </html>
