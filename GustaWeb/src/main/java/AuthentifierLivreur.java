@@ -81,6 +81,9 @@ class AuthentifierLivreur {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(livreurs.size() == 0){
+            return 4;
+        }
         List<Long> idLivreursEnLivraison = new ArrayList<>();
         for (Livreur i : livreurs){
             if(i.getStatut().equals("livraison")) idLivreursEnLivraison.add(i.getId());

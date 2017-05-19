@@ -252,7 +252,6 @@ public class ServiceMetier {
                 
                 Commande commande = new Commande(new Date(), listeP, client, livreur);
                 commandeDAO.creerCommande(commande);
-                Saisie.lireChaine("pause");
                 JpaUtil.validerTransaction();
                 JpaUtil.fermerEntityManager();
                 sT.envoyerMailLivreur(commande);

@@ -15,7 +15,7 @@ public class ActionServlet extends HttpServlet {
 
     ServiceMetier metier;
     public static Set<String> currentUserList = new HashSet<>();
-    static int CHARGE_MAX_LIMIT = 8000;
+    static int CHARGE_MAX_LIMIT = 1000;
 
     @Override
     public void init() throws ServletException {
@@ -59,7 +59,8 @@ public class ActionServlet extends HttpServlet {
                             request.setAttribute("errorMessage","Vous êtes déjà connecté sur ce compte ailleurs ! Veuillez vous déconnecter.");
                             request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                             return;
-                        }       AuthentifierClient act = new AuthentifierClient();
+                        }
+                        AuthentifierClient act = new AuthentifierClient();
                         if(act.execute(request,metier)){
                             request.getRequestDispatcher("/app/restaurantDirectory.jsp").forward(request, response);
                         } else {
@@ -137,6 +138,19 @@ public class ActionServlet extends HttpServlet {
                     default:
                         request.setAttribute("errorMessage","Une erreur inattendue s'est produite. Veuillez essayer plus tard !");
                         request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
+                }
+                return;
+            }
+            //-----------------------------------------------------------------------------------
+            //inscrireClient
+            //-----------------------------------------------------------------------------------
+            if(action.equals("inscrireClient")){
+                InscrireClient act = new InscrireClient();
+                if(act.execute(request,metier)){
+                    response.sendRedirect("/inscriptionSuccess.html");
+                    return;
+                }else{
+                    request.getRequestDispatcher("/errorMessage.jsp").forward(request,response);
                 }
                 return;
             }

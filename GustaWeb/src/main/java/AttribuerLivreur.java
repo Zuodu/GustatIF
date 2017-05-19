@@ -55,21 +55,21 @@ public class AttribuerLivreur {
             request.setAttribute("redirectTarget","dashboard?action=authentifierClient");
             return 1;
         }
-    //fin for
-    Livreur livreur = null;
+        //fin for
+        Livreur livreur = null;
         try {
-                livreur = metier.attribuerLivreur(currentResto,produitscommandes,currentClient);
-                } catch (Exception e) {
-                e.printStackTrace();
-                }
-                if(livreur != null){
-                System.out.println("[AttribuerLivreur] attribution to : "+livreur.getId());
-                return 0;
-                }else{
-                System.out.println("[AttribuerLivreur] attribution failed.");
-                request.setAttribute("errorMessage","Echec de la commande : veuillez réessayer plus tard !");
-                request.setAttribute("redirectTarget","dashboard?action=authentifierClient");
-                return 2;
-                }
-                }
-                }
+            livreur = metier.attribuerLivreur(currentResto,produitscommandes,currentClient);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(livreur != null){
+            System.out.println("[AttribuerLivreur] attribution to : "+livreur.getId());
+            return 0;
+        }else{
+            System.out.println("[AttribuerLivreur] attribution failed.");
+            request.setAttribute("errorMessage","Echec de la commande : veuillez réessayer plus tard !");
+            request.setAttribute("redirectTarget","dashboard?action=authentifierClient");
+            return 2;
+        }
+    }
+}

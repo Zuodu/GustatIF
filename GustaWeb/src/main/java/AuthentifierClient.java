@@ -19,6 +19,7 @@ class AuthentifierClient {
         if (currentUser != null) { // SI YA BIEN CE COMPTE
             HttpSession session = request.getSession(true);
             session.setAttribute("user", email);
+            session.setAttribute("id",currentUser.getId());
             session.setAttribute("client", currentUser);
             List<Restaurant> restaurants = null;
             try {
@@ -31,7 +32,7 @@ class AuthentifierClient {
             return true;
         } else {
             System.out.println("[AuthentifierClient] authentication fail.");
-            request.setAttribute("errorMessage","Ce compte n'existe pas ! Veuillez réessayer.");
+            request.setAttribute("errorMessage","Erreur d'authentification, vérifiez le login et le mot de passe !");
             return false;
         }
     }

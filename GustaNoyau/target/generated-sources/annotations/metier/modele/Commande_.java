@@ -9,7 +9,7 @@ import metier.modele.Client;
 import metier.modele.Livreur;
 import metier.modele.ProduitsCommandes;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-04-15T18:27:34")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-05-18T22:15:23")
 @StaticMetamodel(Commande.class)
 public class Commande_ { 
 

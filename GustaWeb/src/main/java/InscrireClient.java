@@ -14,7 +14,7 @@ class InscrireClient {
             return true;
         }else{
             System.out.println("[InscrireClient] inscription failed.");
-            request.setAttribute("errorMessage","Echec de l'inscription, veuillez recommencer plus tard !");
+            request.setAttribute("errorMessage","Echec de l'inscription, veuillez vérifier vos informations !");
             return false;
         }
 

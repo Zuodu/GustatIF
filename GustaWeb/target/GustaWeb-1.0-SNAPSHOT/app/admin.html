@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GustatIF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="ISO-8859-15">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="/resource/adminFx.js"></script>
+    <!-- bootstrapt minCSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/resource/cover.css">
+    <link rel="shortcut icon" href="/resource/favicon.ico" />
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <img src="/resource/logo.png" alt="" class="navbar-brand" style="padding:0 0">
+        </div>
+        <p class="navbar-text" style="font-size: 13pt">Bonjour Administrateur ! Bienvenue chez GustatIF !</p>
+        <a href="/dashboard?action=deconnexion" class="btn btn-primary navbar-btn navbar-right" style="margin-right: 0">Déconnexion</a>
+
+    </div>
+</nav>
+<!-- CONTENU -->
+<div class="container" style="padding-top: 50px">
+    <div class="page-header">
+        <h1>Visualisation système GustatIF</h1>
+        <div class="lead">Choisissez les données à visualiser avec les onglets ci-dessous.</div>
+    </div>
+    <!-- GROUPE DE PANNEAUX -->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#popup">Modifier le poids max autorisé</button>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div>
+                <ul class="nav nav-tabs nav-justified" role="tablist">
+                    <li role="presentation" class="active"><a href="#infos" role="tab" data-toggle="tab" onclick="chargement('infos');">Infos</a></li>
+                    <li role="presentation"><a href="#restos" role="tab" data-toggle="tab" onclick="chargement('restos');">Liste restaurants</a></li>
+                    <li role="presentation"><a href="#livreurs" role="tab" data-toggle="tab" onclick="chargement('livreurs');">Liste livreurs</a></li>
+                    <li role="presentation"><a href="#livraisons" role="tab" data-toggle="tab" onclick="chargement('livraisons');">Liste livraisons en cours</a></li>
+                </ul>
+            </div>
+            <div class="panel-body">
+                <p id="error"></p>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="infos">
+                        <table class="table table-bordered text-left">
+                            <tr>
+                                <th>Utilisateurs connectés</th>
+                                <th>Nombre d'inscrits</th>
+                                <th>Nombre de livreurs</th>
+                                <th>Nombre de Restaurants</th>
+                                <th>Nombre de commandes en cours</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="restos">
+                        <table class="table table-bordered text-left">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Adresse</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="livreurs">
+                        <table class="table table-bordered text-left">
+                            <tr>
+                                <th>ID</th>
+                                <th>Mail</th>
+                                <th>Adresse</th>
+                                <th>Statut</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="livraisons">
+                        <table class="table table-bordered text-left">
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Livreur</th>
+                                <th>Prix total</th>
+                                <th>Date</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal popup -->
+<div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Changer le poids maximal de commande</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <strong>Poids maximal actuel : </strong><span id="poidsPlaceHolder"></span><span>g</span>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="inputPoids" class="col-sm-4 control-label">Nouveau poids :</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="inputPoids" placeholder="poids en grammes">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="updateBtn" onclick="setPoids()" disabled="disabled">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(chargerInfos());
+    $('#popup').on('show.bs.modal', function (){
+        $.ajax({
+            url: '/dashboard',
+            type: 'POST',
+            data: {
+                action: 'getPoids'
+            }
+        })
+            .done(function(data){
+                console.log(data);
+                $('#poidsPlaceHolder').html(data);
+            })
+            .fail(function(){
+                alert('fail');
+            })
+    });
+    $('#inputPoids').on('input',function(){
+        if ($(this).val()==="") {
+            $('#updateBtn').attr("disabled","disabled");
+        }else{
+            $('#updateBtn').removeAttr("disabled");
+        }
+    });
+
+    function setPoids(){
+        var poids = $('#inputPoids').val();
+        $.ajax({
+            url: '/dashboard',
+            type:'POST',
+            data:{
+                action:'setPoids',
+                poids: poids
+            }
+        }).done(function(){
+            $('#popup').modal('hide');
+        });
+    }
+
+    function chargement(string) {
+        var activeNode = $('#'+string)[0];
+        var node = activeNode.firstElementChild;
+        console.log(node);
+        console.log(node.firstElementChild);
+        console.log(node.firstElementChild.nextElementSibling);
+        switch (activeNode.id){
+            case "infos":
+                chargerInfos();
+                break;
+            case "restos":
+                while (node.childNodes.length > 2) {
+                    node.removeChild(node.lastChild);
+                }
+                console.log(node.childNodes.length);
+                chargerRestos();
+                break;
+            case "livreurs":
+                while (node.childNodes.length > 2) {
+                    node.removeChild(node.lastChild);
+                }
+                chargerLivreurs();
+                break;
+            case "livraisons":
+                while (node.childNodes.length > 2) {
+                    node.removeChild(node.lastChild);
+                }
+                chargerLivraisons();
+                break;
+        }
+    }
+</script>
+</body>
+</html>
